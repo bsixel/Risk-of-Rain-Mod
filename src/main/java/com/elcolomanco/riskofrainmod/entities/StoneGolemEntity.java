@@ -62,8 +62,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 
 public class StoneGolemEntity extends MonsterEntity {
-	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.createKey(StoneGolemEntity.class, DataSerializers.VARINT);
-	private static final DataParameter<Integer> STONE_GOLEM_TYPE = EntityDataManager.createKey(StoneGolemEntity.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> TARGET_ENTITY = EntityDataManager.defineId(StoneGolemEntity.class, DataSerializers.INT);
+	private static final DataParameter<Integer> STONE_GOLEM_TYPE = EntityDataManager.defineId(StoneGolemEntity.class, DataSerializers.INT);
 	
 	private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
 
@@ -73,8 +73,8 @@ public class StoneGolemEntity extends MonsterEntity {
 
 	public StoneGolemEntity(EntityType<? extends MonsterEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.stepHeight = 1.0F;
-		this.experienceValue = 20;
+		this.maxUpStep = 1.0F;
+		this.xpReward = 20;
 	}
 
 	@Override
@@ -92,21 +92,21 @@ public class StoneGolemEntity extends MonsterEntity {
 	}
 	
 	public static AttributeModifierMap.MutableAttribute setAttributes() {
-		return MobEntity.registerAttributes()
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 12.0D)
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 24.0D)
-				.createMutableAttribute(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-				.createMutableAttribute(Attributes.MAX_HEALTH, 100.0D)
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D);
+		return MobEntity.createLivingAttributes()
+				.add(Attributes.ATTACK_DAMAGE, 12.0D)
+				.add(Attributes.FOLLOW_RANGE, 24.0D)
+				.add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
+				.add(Attributes.MAX_HEALTH, 100.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.25D);
 	}
 	
 	@Override
-	protected void updateAITasks() {
-		LivingEntity target = this.getAttackTarget();
+	protected void customServerAiStep() {
+		LivingEntity target = this.getTarget();
 		if (target == null) {
 			this.goalSelector.addGoal(9, this.hurtByTargetGoal);
 		}
-		super.updateAITasks();
+		super.customServerAiStep();
 	}
 
 	@Override
@@ -114,30 +114,31 @@ public class StoneGolemEntity extends MonsterEntity {
     	return new ItemStack(RegistrySetup.STONE_GOLEM_SPAWN_EGG.get());
     }
 
-	protected void registerData() {
-		super.registerData();
-		this.dataManager.register(TARGET_ENTITY, 0);
-		this.dataManager.register(STONE_GOLEM_TYPE, 0);
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.entityData.define(TARGET_ENTITY, 0);
+		this.entityData.define(STONE_GOLEM_TYPE, 0);
 	}
 
-	public void writeAdditional(CompoundNBT compound) {
-		super.writeAdditional(compound);
+	@Override
+	public void addAdditionalSaveData(CompoundNBT compound) {
+		super.addAdditionalSaveData(compound);
 		compound.putString("Type", this.getVariantType().getName());
 	}
 
-	public void readAdditional(CompoundNBT compound) {
-		super.readAdditional(compound);
+	public void readAdditionalSaveData(CompoundNBT compound) {
+		super.readAdditionalSaveData(compound);
 		this.setVariantType(StoneGolemEntity.Type.getTypeByName(compound.getString("Type")));
 	}
 	
 	@Override
-	public boolean attackEntityAsMob(Entity entityIn) {
+	public boolean doHurtTarget(Entity entityIn) {
 		this.attackTimer = 15;
-		this.world.setEntityState(this, (byte)4);
-		boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), (float)this.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
+		this.level.broadcastEntityEvent(this, (byte)4);
+		boolean flag = entityIn.hurt(DamageSource.mobAttack(this), (float)this.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
 		if (flag) {
-			entityIn.setMotion(entityIn.getMotion().add(0.0D, (double)0.75F, 0.0D));
-			this.applyEnchantments(this, entityIn);
+			entityIn.setDeltaMovement(entityIn.getDeltaMovement().add(0.0D, (double)0.75F, 0.0D));
+			this.doEnchantDamageEffects(this, entityIn);
 		}
 		this.playSound(this.getClapSound(), 1.5F, 1.0F);
 		return flag;
@@ -147,28 +148,17 @@ public class StoneGolemEntity extends MonsterEntity {
 		return RegistrySetup.STONE_GOLEM_CLAP.get();
 	}
 
-	public void handleStatusUpdate(byte id) {
+	@Override
+	public void handleEntityEvent(byte id) {
 		if (id == 4) {
 			this.attackTimer = 15;
 			this.playSound(this.getClapSound(), 1.5F, 1.0F);
-			super.handleStatusUpdate(id);
-		}
-	}
-	
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if (super.attackEntityFrom(source, amount)) {
-			LivingEntity livingentity = this.getAttackTarget();
-			if (livingentity == null && source.getTrueSource() instanceof LivingEntity) {
-				livingentity = (LivingEntity)source.getTrueSource();
-			}
-			return true;
-		} else {
-			return false;
+			super.handleEntityEvent(id);
 		}
 	}
 	
 	@Override
-	public boolean isNoDespawnRequired() {
+	public boolean isPersistenceRequired() {
 		return RoRconfig.DESPAWN_STONE_GOLEM;
 	}
 	
@@ -182,25 +172,25 @@ public class StoneGolemEntity extends MonsterEntity {
 	
 	@Nullable
 	@Override
-	public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag) {
+	public ILivingEntityData finalizeSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason reason, @Nullable ILivingEntityData spawnData, @Nullable CompoundNBT dataTag) {
 		this.playSound(this.getSpawnSound(), 1.0F, 1.0F);
 
-		Optional<RegistryKey<Biome>> optional = world.func_242406_i(this.getPosition());
+		Optional<RegistryKey<Biome>> optional = world.getBiomeName(this.blockPosition());
 		StoneGolemEntity.Type stonegolementity$type = StoneGolemEntity.Type.getTypeByBiome(optional);
 		if (spawnData instanceof StoneGolemEntity.StoneGolemData) {
 			spawnData = new StoneGolemEntity.StoneGolemData(stonegolementity$type);
 		}
 		this.setVariantType(stonegolementity$type);
 		
-		return super.onInitialSpawn(world, difficulty, reason, spawnData, dataTag);
+		return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
 	}
 
 	public StoneGolemEntity.Type getVariantType() {
-		return StoneGolemEntity.Type.getTypeByIndex(this.dataManager.get(STONE_GOLEM_TYPE));
+		return StoneGolemEntity.Type.getTypeByIndex(this.entityData.get(STONE_GOLEM_TYPE));
 	}
 
 	private void setVariantType(StoneGolemEntity.Type typeIn) {
-		this.dataManager.set(STONE_GOLEM_TYPE, typeIn.getIndex());
+		this.entityData.set(STONE_GOLEM_TYPE, typeIn.getIndex());
 	}
 
 	public int getAttackDuration() {
@@ -208,22 +198,22 @@ public class StoneGolemEntity extends MonsterEntity {
 	}
 
 	public void setTargetedEntity(int entityId) {
-		this.dataManager.set(TARGET_ENTITY, entityId);
+		this.entityData.set(TARGET_ENTITY, entityId);
 	}
 
 	public boolean hasTargetedEntity() {
-		return this.dataManager.get(TARGET_ENTITY) != 0;
+		return this.entityData.get(TARGET_ENTITY) != 0;
 	}
 
 	@Nullable
 	public LivingEntity getTargetedEntity() {
 		if (!this.hasTargetedEntity()) {
 			return null;
-		} else if (this.world.isRemote) {
+		} else if (this.level.isClientSide) {
 			if (this.targetedEntity != null) {
 				return this.targetedEntity;
 			} else {
-				Entity entity = this.world.getEntityByID(this.dataManager.get(TARGET_ENTITY));
+				Entity entity = this.level.getEntity(this.entityData.get(TARGET_ENTITY));
 				if (entity instanceof LivingEntity) {
 					this.targetedEntity = (LivingEntity)entity;
 					return this.targetedEntity;
@@ -232,12 +222,13 @@ public class StoneGolemEntity extends MonsterEntity {
 				}
 			}
 		} else {
-			return this.getAttackTarget();
+			return this.getTarget();
 		}
 	}
-	
-	public void notifyDataManagerChange(DataParameter<?> key) {
-		super.notifyDataManagerChange(key);
+
+	@Override
+	public void onSyncedDataUpdated(DataParameter<?> key) {
+		super.onSyncedDataUpdated(key);
 		if (TARGET_ENTITY.equals(key)) {
 			this.clientSideAttackTime = 0;
 			this.targetedEntity = null;
@@ -250,20 +241,20 @@ public class StoneGolemEntity extends MonsterEntity {
 		}
 
 		if (this.isAlive()) {
-			if (this.collidedHorizontally && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this)) {
+			if (this.horizontalCollision && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this)) {
 				boolean flag = false;
-				AxisAlignedBB axisalignedbb = this.getBoundingBox().grow(0.2D);;
+				AxisAlignedBB axisalignedbb = this.getBoundingBox().inflate(0.2D);;
 
-				for(BlockPos blockpos : BlockPos.getAllInBoxMutable(MathHelper.floor(axisalignedbb.minX), MathHelper.floor(axisalignedbb.minY), MathHelper.floor(axisalignedbb.minZ), MathHelper.floor(axisalignedbb.maxX), MathHelper.floor(axisalignedbb.maxY), MathHelper.floor(axisalignedbb.maxZ))) {
-					BlockState blockstate = this.world.getBlockState(blockpos);
+				for(BlockPos blockpos : BlockPos.betweenClosed(MathHelper.floor(axisalignedbb.minX), MathHelper.floor(axisalignedbb.minY), MathHelper.floor(axisalignedbb.minZ), MathHelper.floor(axisalignedbb.maxX), MathHelper.floor(axisalignedbb.maxY), MathHelper.floor(axisalignedbb.maxZ))) {
+					BlockState blockstate = this.level.getBlockState(blockpos);
 					Block block = blockstate.getBlock();
 					if (block instanceof LeavesBlock) {
-						flag = this.world.destroyBlock(blockpos, true, this) || flag;
+						flag = this.level.destroyBlock(blockpos, true, this) || flag;
 					}
 				}
 			}
 		}
-		super.livingTick();
+		super.aiStep();
 	}
 
 	public int getAttackTimer() {
@@ -271,9 +262,9 @@ public class StoneGolemEntity extends MonsterEntity {
 	}
 
 	@Override
-	public void onDeath(DamageSource cause) {
+	public void die(DamageSource cause) {
 		this.playSound(this.getDeathVoiceSound(), 0.8F, 1.0F);
-		super.onDeath(cause);
+		super.die(cause);
 	}
 
 	@Override
@@ -317,7 +308,7 @@ public class StoneGolemEntity extends MonsterEntity {
 	}
 
 	public boolean isEntityMoving() {
-		if(this.prevPosX != this.getPosX() || this.prevPosZ != this.getPosZ()) {
+		if(this.xOld != this.getX() || this.zOld != this.getZ()) {
 			return true;
 		} else {
 			return false;
@@ -338,7 +329,7 @@ public class StoneGolemEntity extends MonsterEntity {
 	      return ((float)this.clientSideAttackTime + p_175477_1_) / (float)this.getAttackDuration();
 	   }
 
-	protected PathNavigator createNavigator(World worldIn) {
+	protected PathNavigator createNavigation(World worldIn) {
 		return new StoneGolemEntity.Navigator(this, worldIn);
 	}
 
@@ -348,8 +339,8 @@ public class StoneGolemEntity extends MonsterEntity {
 		}
 
 		protected PathFinder getPathFinder(int p_179679_1_) {
-			this.nodeProcessor = new StoneGolemEntity.Processor();
-			return new PathFinder(this.nodeProcessor, p_179679_1_);
+			this.nodeEvaluator = new StoneGolemEntity.Processor();
+			return new PathFinder(this.nodeEvaluator, p_179679_1_);
 		}
 	}
 
@@ -357,8 +348,9 @@ public class StoneGolemEntity extends MonsterEntity {
 		private Processor() {
 		}
 
-		protected PathNodeType func_215744_a(IBlockReader p_215744_1_, boolean p_215744_2_, boolean p_215744_3_, BlockPos p_215744_4_, PathNodeType p_215744_5_) {
-			return p_215744_5_ == PathNodeType.LEAVES ? PathNodeType.OPEN : super.func_215744_a(p_215744_1_, p_215744_2_, p_215744_3_, p_215744_4_, p_215744_5_);
+		@Override
+		protected PathNodeType evaluateBlockPathType(IBlockReader p_215744_1_, boolean p_215744_2_, boolean p_215744_3_, BlockPos p_215744_4_, PathNodeType p_215744_5_) {
+			return p_215744_5_ == PathNodeType.LEAVES ? PathNodeType.OPEN : super.evaluateBlockPathType(p_215744_1_, p_215744_2_, p_215744_3_, p_215744_4_, p_215744_5_);
 		}
 	}
 	
@@ -371,7 +363,7 @@ public class StoneGolemEntity extends MonsterEntity {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static enum Type {
+	public enum Type {
 		NEUTRAL(0, "neutral", Biomes.BEACH, Biomes.GRAVELLY_MOUNTAINS, Biomes.MODIFIED_GRAVELLY_MOUNTAINS, Biomes.RIVER, Biomes.STONE_SHORE),
 		BADLANDS(1, "badlands", Biomes.BADLANDS, Biomes.BADLANDS_PLATEAU, Biomes.WOODED_BADLANDS_PLATEAU, Biomes.ERODED_BADLANDS, Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU, Biomes.MODIFIED_BADLANDS_PLATEAU),
 		DARK_FOREST(2, "dark_forest", Biomes.DARK_FOREST, Biomes.DARK_FOREST_HILLS),
@@ -395,7 +387,7 @@ public class StoneGolemEntity extends MonsterEntity {
 		private final String name;
 		private final List<RegistryKey<Biome>> spawnBiomes;
 
-		private Type(int indexIn, String nameIn, RegistryKey<Biome>... spawnBiomes) {
+		Type(int indexIn, String nameIn, RegistryKey<Biome>... spawnBiomes) {
 			this.index = indexIn;
 			this.name = nameIn;
 			this.spawnBiomes = Arrays.asList(spawnBiomes);

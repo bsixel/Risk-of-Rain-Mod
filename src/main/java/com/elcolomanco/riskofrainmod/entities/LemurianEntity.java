@@ -55,7 +55,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class LemurianEntity extends MonsterEntity {
 
-	private static final DataParameter<Integer> LEMURIAN_TYPE = EntityDataManager.createKey(StoneGolemEntity.class, DataSerializers.VARINT);
+	private static final DataParameter<Integer> LEMURIAN_TYPE = EntityDataManager.defineId(StoneGolemEntity.class, DataSerializers.INT);
 
 	private boolean selectHand = true;
 	private int attackTimer;
@@ -63,9 +63,9 @@ public class LemurianEntity extends MonsterEntity {
 
 	public LemurianEntity(EntityType<? extends MonsterEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.experienceValue = 15;
+		this.xpReward = 15;
 		this.setCanPickUpLoot(true);
-		((GroundPathNavigator)this.getNavigator()).setBreakDoors(true);
+		((GroundPathNavigator)this.getNavigation()).setCanOpenDoors(true);
 	}
 
 	@Override
@@ -77,19 +77,19 @@ public class LemurianEntity extends MonsterEntity {
 		this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 0.6D));
 		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
 		this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
-		this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setCallsForHelp());
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, true));
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolemEntity.class, true));
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, WanderingTraderEntity.class, true));
 	}
 	
 	public static AttributeModifierMap.MutableAttribute setAttributes() {
-		return MobEntity.registerAttributes()
-				.createMutableAttribute(Attributes.ARMOR, 4.0D)
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 3.5D)
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 32.0D)
-				.createMutableAttribute(Attributes.MAX_HEALTH, 20.0D)
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3D);
+		return MobEntity.createLivingAttributes()
+				.add(Attributes.ARMOR, 4.0D)
+				.add(Attributes.ATTACK_DAMAGE, 3.5D)
+				.add(Attributes.FOLLOW_RANGE, 32.0D)
+				.add(Attributes.MAX_HEALTH, 20.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.3D);
 	}
 
 	@Override
@@ -97,79 +97,72 @@ public class LemurianEntity extends MonsterEntity {
     	return new ItemStack(RegistrySetup.LEMURIAN_SPAWN_EGG.get());
     }
 
-	protected void registerData() {
-		super.registerData();
-		this.dataManager.register(LEMURIAN_TYPE, 0);
+    @Override
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		this.entityData.define(LEMURIAN_TYPE, 0);
 	}
 
-	public void writeAdditional(CompoundNBT compound) {
-		super.writeAdditional(compound);
+	@Override
+	public void addAdditionalSaveData(CompoundNBT compound) {
+		super.addAdditionalSaveData(compound);
 		compound.putString("Type", this.getVariantType().getName());
 	}
 
-	public void readAdditional(CompoundNBT compound) {
-		super.readAdditional(compound);
+	public void readAdditionalSaveData(CompoundNBT compound) {
+		super.readAdditionalSaveData(compound);
 		this.setVariantType(LemurianEntity.Type.getTypeByName(compound.getString("Type")));
 	}
 
 	@Nullable
 	@Override
-	public ILivingEntityData onInitialSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
-		Optional<RegistryKey<Biome>> optional = worldIn.func_242406_i(this.getPosition());
+	public ILivingEntityData finalizeSpawn(IServerWorld worldIn, DifficultyInstance difficultyIn, SpawnReason reason, @Nullable ILivingEntityData spawnDataIn, @Nullable CompoundNBT dataTag) {
+		Optional<RegistryKey<Biome>> optional = worldIn.getBiomeName(this.blockPosition());
 	      LemurianEntity.Type lemurianentity$type = LemurianEntity.Type.getTypeByBiome(optional);
 	      if (spawnDataIn instanceof LemurianEntity.LemurianData) {
 	         spawnDataIn = new LemurianEntity.LemurianData(lemurianentity$type);
 	      }
 		
 		this.setVariantType(lemurianentity$type);
-		return super.onInitialSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
+		return super.finalizeSpawn(worldIn, difficultyIn, reason, spawnDataIn, dataTag);
 	}
 
 	public LemurianEntity.Type getVariantType() {
-		return LemurianEntity.Type.getTypeByIndex(this.dataManager.get(LEMURIAN_TYPE));
+		return LemurianEntity.Type.getTypeByIndex(this.entityData.get(LEMURIAN_TYPE));
 	}
 
 	private void setVariantType(LemurianEntity.Type typeIn) {
-		this.dataManager.set(LEMURIAN_TYPE, typeIn.getIndex());
+		this.entityData.set(LEMURIAN_TYPE, typeIn.getIndex());
 	}
 
-	public boolean attackEntityAsMob(Entity entityIn) {
+	@Override
+	public boolean doHurtTarget(Entity entityIn) {
 		this.attackTimer = 10;
-		this.world.setEntityState(this, (byte)4);
+		this.level.broadcastEntityEvent(this, (byte)4);
 		boolean flag;
-		flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), (float)((int)this.getAttribute(Attributes.ATTACK_DAMAGE).getValue()));
+		flag = entityIn.hurt(DamageSource.mobAttack(this), (float)((int)this.getAttribute(Attributes.ATTACK_DAMAGE).getValue()));
 		if (flag) {
-			this.applyEnchantments(this, entityIn);
+			this.doEnchantDamageEffects(this, entityIn);
 		}
 		this.playSound(this.getAttackSound(), 1.0F, 1.0F);
 		return flag;
 	}
 
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if (super.attackEntityFrom(source, amount)) {
-			LivingEntity livingentity = this.getAttackTarget();
-			if (livingentity == null && source.getTrueSource() instanceof LivingEntity) {
-				livingentity = (LivingEntity)source.getTrueSource();
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public void livingTick() {
-		super.livingTick();
+	@Override
+	public void aiStep() {
+		super.aiStep();
 		if (this.attackTimer > 0) {
 			--this.attackTimer;
 		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void handleStatusUpdate(byte id) {
+	@Override
+	public void handleEntityEvent(byte id) {
 		if (id == 4) {
 			this.attackTimer = 10;
 			this.playSound(this.getAttackSound(), 1.0F, 1.0F);
-			super.handleStatusUpdate(id);
+			super.handleEntityEvent(id);
 		}
 	}
 
@@ -217,7 +210,7 @@ public class LemurianEntity extends MonsterEntity {
 	}
 
 	public boolean isEntityMoving() {
-		if(this.prevPosX != this.getPosX() || this.prevPosZ != this.getPosZ()) {
+		if(this.xOld != this.getX() || this.zOld != this.getZ()) {
 			return true;
 		} else {
 			return false;

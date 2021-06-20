@@ -31,10 +31,10 @@ public class GunnerDroneEntity extends AbstractFlyingDroneEntity implements IRan
 
 	public GunnerDroneEntity(EntityType<? extends GunnerDroneEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.moveController = new FlyingMovementController(this, 16, true);
-		this.setPathPriority(PathNodeType.DANGER_FIRE, -1.0F);
-		this.setPathPriority(PathNodeType.DAMAGE_FIRE, -1.0F);
-		this.setPathPriority(PathNodeType.WATER, -1.0F);
+		this.moveControl = new FlyingMovementController(this, 16, true);
+		this.setPathfindingMalus(PathNodeType.DANGER_FIRE, -1.0F);
+		this.setPathfindingMalus(PathNodeType.DAMAGE_FIRE, -1.0F);
+		this.setPathfindingMalus(PathNodeType.WATER, -1.0F);
 	}
 	
 	@Override
@@ -48,12 +48,12 @@ public class GunnerDroneEntity extends AbstractFlyingDroneEntity implements IRan
 	}
 	
 	public static AttributeModifierMap.MutableAttribute setAttributes() {
-		return MobEntity.registerAttributes()
-				.createMutableAttribute(Attributes.ATTACK_DAMAGE, 1.0D)
-				.createMutableAttribute(Attributes.FLYING_SPEED, (double)0.8F)
-				.createMutableAttribute(Attributes.FOLLOW_RANGE, 20.0D)
-				.createMutableAttribute(Attributes.MAX_HEALTH, 20.0D)
-				.createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.4D);
+		return MobEntity.createLivingAttributes()
+				.add(Attributes.ATTACK_DAMAGE, 1.0D)
+				.add(Attributes.FLYING_SPEED, (double)0.8F)
+				.add(Attributes.FOLLOW_RANGE, 20.0D)
+				.add(Attributes.MAX_HEALTH, 20.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.4D);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -62,11 +62,11 @@ public class GunnerDroneEntity extends AbstractFlyingDroneEntity implements IRan
 	}
 	
 	@Override
-	protected void updateAITasks() {
-		if (this.isTamed()) {
+	protected void customServerAiStep() {
+		if (this.isTame()) {
 			this.goalSelector.addGoal(2, this.attackGoal);
 		}
-		super.updateAITasks();
+		super.customServerAiStep();
 	}
 	
 	protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
@@ -79,7 +79,7 @@ public class GunnerDroneEntity extends AbstractFlyingDroneEntity implements IRan
     }
 
 	@Override
-	public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
+	public void performRangedAttack(LivingEntity target, float distanceFactor) {
 		
 	}
 }

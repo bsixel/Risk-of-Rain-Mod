@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class SpawnHandler {
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public static void addEntitySpawns(BiomeLoadingEvent event) {
+	public static void addFreshEntitySpawns(BiomeLoadingEvent event) {
 		Category category = event.getCategory();
 		List<Spawners> monsterSpawners = event.getSpawns().getSpawner(EntityClassification.MONSTER);
 		List<Spawners> creatureSpawners = event.getSpawns().getSpawner(EntityClassification.CREATURE);
@@ -54,12 +54,12 @@ public class SpawnHandler {
 	}
 	
 	public static void setSpawnPlacement() {
-	    EntitySpawnPlacementRegistry.register(RegistrySetup.GUNNER_DRONE.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GunnerDroneEntity::canAnimalSpawn);
-		EntitySpawnPlacementRegistry.register(RegistrySetup.LEMURIAN.get(),     EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LemurianEntity::canMonsterSpawnInLight);
-		EntitySpawnPlacementRegistry.register(RegistrySetup.STONE_GOLEM.get(),  EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, StoneGolemEntity::canMonsterSpawnInLight);
+	    EntitySpawnPlacementRegistry.register(RegistrySetup.GUNNER_DRONE.get(), EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, GunnerDroneEntity::checkAnimalSpawnRules);
+		EntitySpawnPlacementRegistry.register(RegistrySetup.LEMURIAN.get(),     EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, LemurianEntity::checkMonsterSpawnRules);
+		EntitySpawnPlacementRegistry.register(RegistrySetup.STONE_GOLEM.get(),  EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, StoneGolemEntity::checkMonsterSpawnRules);
 		
-		GlobalEntityTypeAttributes.put(RegistrySetup.GUNNER_DRONE.get(), GunnerDroneEntity.setAttributes().create());
-		GlobalEntityTypeAttributes.put(RegistrySetup.LEMURIAN.get(),     LemurianEntity.setAttributes().create());
-		GlobalEntityTypeAttributes.put(RegistrySetup.STONE_GOLEM.get(),  StoneGolemEntity.setAttributes().create());
+		GlobalEntityTypeAttributes.put(RegistrySetup.GUNNER_DRONE.get(), GunnerDroneEntity.setAttributes().build());
+		GlobalEntityTypeAttributes.put(RegistrySetup.LEMURIAN.get(),     LemurianEntity.setAttributes().build());
+		GlobalEntityTypeAttributes.put(RegistrySetup.STONE_GOLEM.get(),  StoneGolemEntity.setAttributes().build());
 	}
 }

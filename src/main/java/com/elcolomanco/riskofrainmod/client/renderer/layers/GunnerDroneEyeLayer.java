@@ -22,11 +22,11 @@ public class GunnerDroneEyeLayer <T extends GunnerDroneEntity, M extends GunnerD
 
 	@Override
 	public void render(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T adolescent, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-		Minecraft.getInstance().getTextureManager().bindTexture(GUNNER_DRONE_EYE_LAYER);
+		Minecraft.getInstance().getTextureManager().bind(GUNNER_DRONE_EYE_LAYER);
 
 		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RenderTypes.getEmissiveEntity(GUNNER_DRONE_EYE_LAYER));
 		
-		this.getEntityModel().setRotationAngles(adolescent, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-		this.getEntityModel().render(matrixStackIn, ivertexbuilder, 240, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		this.getParentModel().setupAnim(adolescent, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+		this.getParentModel().renderToBuffer(matrixStackIn, ivertexbuilder, 240, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 	}
 }

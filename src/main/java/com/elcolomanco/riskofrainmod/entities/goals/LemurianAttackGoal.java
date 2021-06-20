@@ -42,61 +42,66 @@ public class LemurianAttackGoal extends Goal {
     	this.moveSpeedAmp = moveSpeedAmpIn;
     	this.maxAttackDistance = maxAttackDistanceIn * maxAttackDistanceIn;
     	this.longMemory = useLongMemory;
-    	this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    	this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
 
     // Returns whether execution should begin. You can also read and cache any state necessary for execution in this method as well
-    public boolean shouldExecute() {
+	@Override
+    public boolean canUse() {
 
-    	if(entity.getEntityWorld().getDifficulty() == Difficulty.PEACEFUL) {
+    	if(entity.level.getDifficulty() == Difficulty.PEACEFUL) {
 			return false;
 		}
-    	LivingEntity livingentity = this.entity.getAttackTarget();
+    	LivingEntity livingentity = this.entity.getTarget();
     	return livingentity != null && livingentity.isAlive() && this.entity.canAttack(livingentity);
     }
 
-    public boolean shouldContinueExecuting() {
-    	LivingEntity livingentity = this.entity.getAttackTarget();
+    @Override
+    public boolean canContinueToUse() {
+    	LivingEntity livingentity = this.entity.getTarget();
 		if(livingentity == null) {
 			return false;
 		} else if(!livingentity.isAlive()) {
 			return false;
 		} else if(!this.longMemory) {
-			return !this.entity.getNavigator().noPath();
-		} else if(!this.entity.isWithinHomeDistanceFromPosition(livingentity.getPosition())) {
+			return !this.entity.getNavigation().isDone();
+		} else if(!this.entity.isWithinRestriction(livingentity.blockPosition())) {
 			return false;
 		} else {
 			return !(livingentity instanceof PlayerEntity) || !livingentity.isSpectator() && !((PlayerEntity) livingentity).isCreative();
 		}
 	}
 
-    // Execute a one shot task or start executing a continuous task
-    public void startExecuting() {
-    	super.startExecuting();
-    	this.entity.getNavigator().setPath(this.path, this.moveSpeedAmp);
-        this.entity.setAggroed(true);
+	// Execute a one shot task or start executing a continuous task
+	@Override
+    public void start() {
+    	super.start();
+    	this.entity.getNavigation().moveTo(this.path, this.moveSpeedAmp);
+        this.entity.setAggressive(true);
     	this.attackStep = 0;
     	this.delayCounter = 0;
     }
 
     // Reset the task's internal state. Called when this task is interrupted by another one
-    public void resetTask() {
-    	LivingEntity livingentity = this.entity.getAttackTarget();
-		if(!EntityPredicates.CAN_AI_TARGET.test(livingentity)) {
-			this.entity.setAttackTarget((LivingEntity) null);
+	@Override
+	public void stop() {
+    	LivingEntity livingentity = this.entity.getTarget();
+		if(!EntityPredicates.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
+			this.entity.setTarget(null);
 		}
-    	this.entity.setAggroed(false);
-		this.entity.getNavigator().clearPath();
+    	this.entity.setAggressive(false);
+		this.entity.getNavigation().stop();
         this.seeTime = 0;
     }
 
+    @Override
     // Keep ticking a continuous task that has already been started
     public void tick() {
     	--this.attackTime;
-    	LivingEntity livingentity = this.entity.getAttackTarget();
+    	LivingEntity livingentity = this.entity.getTarget();
     	if (livingentity != null) {
-    		double d0 = this.entity.getDistanceSq(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ());
-    		boolean flag = this.entity.getEntitySenses().canSee(livingentity);
+    		double d0 = this.entity.distanceToSqr(livingentity.getX(), livingentity.getY(), livingentity.getZ());
+    		boolean flag = this.entity.getSensing().canSee(livingentity);
     		
     		if (flag) {
     			++this.seeTime;
@@ -104,22 +109,22 @@ public class LemurianAttackGoal extends Goal {
     			--this.seeTime;
     		}
     		// Melee attack
-    		if (d0 < (double)(this.maxAttackDistance * 0.3)) {
+    		if (d0 < (this.maxAttackDistance * 0.3)) {
     			if (!flag) {
-                	this.entity.getNavigator().tryMoveToEntityLiving(livingentity, this.moveSpeedAmp);
+                	this.entity.getNavigation().moveTo(livingentity, this.moveSpeedAmp);
                 }
-                this.entity.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 30.0F);
+                this.entity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
                 --this.delayCounter;
-                if ((this.longMemory || this.entity.getEntitySenses().canSee(livingentity)) && this.delayCounter <= 0 && (this.targetX == 0.0D && this.targetY == 0.0D && this.targetZ == 0.0D || livingentity.getDistanceSq(this.targetX, this.targetY, this.targetZ) >= 1.0D || this.entity.getRNG().nextFloat() < 0.05F)) {
-                	this.targetX = livingentity.getPosX();
-                	this.targetY = livingentity.getPosY();
-                    this.targetZ = livingentity.getPosZ();
-                    this.delayCounter = 4 + this.entity.getRNG().nextInt(7);
+                if ((this.longMemory || this.entity.getSensing().canSee(livingentity)) && this.delayCounter <= 0 && (this.targetX == 0.0D && this.targetY == 0.0D && this.targetZ == 0.0D || livingentity.distanceToSqr(this.targetX, this.targetY, this.targetZ) >= 1.0D || this.entity.getRandom().nextFloat() < 0.05F)) {
+                	this.targetX = livingentity.getX();
+                	this.targetY = livingentity.getY();
+                    this.targetZ = livingentity.getZ();
+                    this.delayCounter = 4 + this.entity.getRandom().nextInt(7);
                     if (this.canPenalize) {
                     	this.delayCounter += failedPathFindingPenalty;
-                    	if (this.entity.getNavigator().getPath() != null) {
-                    		PathPoint finalPathPoint = this.entity.getNavigator().getPath().getFinalPathPoint();
-                    		if (finalPathPoint != null && livingentity.getDistanceSq(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
+                    	if (this.entity.getNavigation().getPath() != null) {
+                    		PathPoint finalPathPoint = this.entity.getNavigation().getPath().getEndNode();
+                    		if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
                     			failedPathFindingPenalty = 0;
                     		else
                     			failedPathFindingPenalty += 10;
@@ -132,7 +137,7 @@ public class LemurianAttackGoal extends Goal {
                     } else if (d0 > 144.0D) {
                     	 this.delayCounter += 5;
                      }
-                    if (!this.entity.getNavigator().tryMoveToEntityLiving(livingentity, this.moveSpeedAmp)) {
+                    if (!this.entity.getNavigation().moveTo(livingentity, this.moveSpeedAmp)) {
                     	 this.delayCounter += 15;
                      }
                 }
@@ -141,19 +146,19 @@ public class LemurianAttackGoal extends Goal {
     		}
     		// Strafing
     		if(d0 < (double)(this.maxAttackDistance)) {
-    			if (d0 > (double)(this.maxAttackDistance * 0.3) && flag) {
+    			if (d0 > (this.maxAttackDistance * 0.3) && flag) {
     				if (!(d0 > (double)this.maxAttackDistance) && this.seeTime >= 20) {
-    					this.entity.getNavigator().clearPath();
+    					this.entity.getNavigation().stop();
     					++this.strafingTime;
     				} else {
-    					this.entity.getNavigator().tryMoveToEntityLiving(livingentity, 0.8D);
+    					this.entity.getNavigation().moveTo(livingentity, 0.8D);
     					this.strafingTime = -1;
     				}
     				if (this.strafingTime >= 20) {
-    					if ((double)this.entity.getRNG().nextFloat() < 0.3D) {
+    					if ((double)this.entity.getRandom().nextFloat() < 0.3D) {
     						this.strafingClockwise = !this.strafingClockwise;
     					}
-    					if ((double)this.entity.getRNG().nextFloat() < 0.3D) {
+    					if ((double)this.entity.getRandom().nextFloat() < 0.3D) {
     						this.strafingBackwards = !this.strafingBackwards;
     					}
     					this.strafingTime = 0;
@@ -164,17 +169,17 @@ public class LemurianAttackGoal extends Goal {
     					} else if (d0 < (double)(this.maxAttackDistance * 0.6F)) {
     						this.strafingBackwards = true;
     					}
-    					this.entity.getMoveHelper().strafe(this.strafingBackwards ? -0.2F : 0.4F, this.strafingClockwise ? 0.4F : -0.4F);
-    					this.entity.faceEntity(livingentity, 30.0F, 30.0F);
+    					this.entity.getMoveControl().strafe(this.strafingBackwards ? -0.2F : 0.4F, this.strafingClockwise ? 0.4F : -0.4F);
+    					this.entity.lookAt(livingentity, 30.0F, 30.0F);
     				}else {
-    					this.entity.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 30.0F);
+    					this.entity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
     				}
     			}
     			// Fireball attack
-    			if ((d0 > (double)(this.maxAttackDistance * 0.3) && flag) || ((this.entity.getNavigator().noPath()) && (d0 < (double)(this.maxAttackDistance)) && flag)) {
-    				double d1 = livingentity.getPosX() - this.entity.getPosX();
-    				double d2 = livingentity.getPosYHeight(0.3333333333333333D) - this.entity.getPosYHeight(0.6D);
-    				double d3 = livingentity.getPosZ() - this.entity.getPosZ();
+    			if ((d0 > (this.maxAttackDistance * 0.3) && flag) || ((this.entity.getNavigation().isDone()) && (d0 < (double)(this.maxAttackDistance)) && flag)) {
+    				double d1 = livingentity.getX() - this.entity.getX();
+    				double d2 = livingentity.getY(0.3333333333333333D) - this.entity.getY(0.6D);
+    				double d3 = livingentity.getZ() - this.entity.getZ();
     				if (this.attackTime <= 0) {
     					++this.attackStep;
     					if (this.attackStep == 1) {
@@ -187,31 +192,31 @@ public class LemurianAttackGoal extends Goal {
     					}
     					if (this.attackStep > 1) {
     						float f = MathHelper.sqrt(MathHelper.sqrt(d0)) * 0.5F;
-    						this.entity.world.playEvent((PlayerEntity)null, 1018, entity.getPosition(), 0);
+    						this.entity.level.levelEvent(null, 1018, entity.blockPosition(), 0);
     						
     						for(int i = 0; i < 1; ++i) {
-    							SmallFireballEntity smallfireballentity = new SmallFireballEntity(this.entity.world, this.entity, d1 * (double)f, d2, d3 * (double)f);
-    							smallfireballentity.setPosition(smallfireballentity.getPosX(), this.entity.getPosYHeight(0.6D) + 0.5D, smallfireballentity.getPosZ());
-    							this.entity.world.addEntity(smallfireballentity);
+    							SmallFireballEntity smallfireballentity = new SmallFireballEntity(this.entity.level, this.entity, d1 * (double)f, d2, d3 * (double)f);
+    							smallfireballentity.setPos(smallfireballentity.getX(), this.entity.getY(0.6D) + 0.5D, smallfireballentity.getZ());
+    							this.entity.level.addFreshEntity(smallfireballentity);
     						}
     					}
     				}
-    				this.entity.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 30.0F);
+    				this.entity.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
     			}
     		}
     		super.tick();
     	}
     }
-    
+
     protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
 		double d0 = this.getAttackReachSqr(enemy);
 		if (distToEnemySqr <= d0 && this.attackTick <= 0) {
 			this.attackTick = 20;
-			this.entity.attackEntityAsMob(enemy);
+			this.entity.doHurtTarget(enemy);
 		}
 	}
 
 	protected double getAttackReachSqr(LivingEntity attackTarget) {
-		return (double)(this.entity.getWidth() * 2.0F * this.entity.getWidth() * 2.0F + attackTarget.getWidth());
+		return this.entity.getBbWidth() * 2.0F * this.entity.getBbWidth() * 2.0F + attackTarget.getBbWidth();
 	}
 }

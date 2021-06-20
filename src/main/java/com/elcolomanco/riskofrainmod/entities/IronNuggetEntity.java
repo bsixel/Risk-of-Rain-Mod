@@ -35,18 +35,18 @@ public class IronNuggetEntity extends ProjectileItemEntity {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult result) {
+	protected void onHit(RayTraceResult result) {
 		if (result.getType() == RayTraceResult.Type.ENTITY) {
 			Entity entity = ((EntityRayTraceResult)result).getEntity();
-			entity.attackEntityFrom(DamageSource.causeThrownDamage(this, this.func_234616_v_()), (float)2.0);
+			entity.hurt(DamageSource.thrown(this, this.getOwner()), (float)2.0);
 		}
-		if (!this.world.isRemote) {
+		if (!this.level.isClientSide) {
 			this.remove();
 		}
 	}
 	
 	@Override
-	public IPacket<?> createSpawnPacket() {
+	public IPacket<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

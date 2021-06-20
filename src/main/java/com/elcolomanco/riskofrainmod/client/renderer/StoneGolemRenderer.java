@@ -24,7 +24,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 public class StoneGolemRenderer extends MobRenderer<StoneGolemEntity, StoneGolemModel<StoneGolemEntity>>{
 	private static final ResourceLocation TEXTURE_LASER_BEAM = new ResourceLocation("textures/entity/guardian_beam.png");
-	private static final RenderType field_229107_h_ = RenderType.getEntityCutoutNoCull(TEXTURE_LASER_BEAM);
+	private static final RenderType field_229107_h_ = RenderType.entityCutoutNoCull(TEXTURE_LASER_BEAM);
 	
 	private static final ResourceLocation BADLANDS		= new ResourceLocation(RoRmod.MODID, "textures/entity/stone_golem/stone_golem_badlands.png");
 	private static final ResourceLocation DARK_FOREST	= new ResourceLocation(RoRmod.MODID, "textures/entity/stone_golem/stone_golem_dark_forest.png");
@@ -40,12 +40,12 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolemEntity, StoneGolem
 	private static final ResourceLocation TAIGA			= new ResourceLocation(RoRmod.MODID, "textures/entity/stone_golem/stone_golem_taiga.png");
 	
 	public StoneGolemRenderer(EntityRendererManager renderManagerIn) {
-		super(renderManagerIn, new StoneGolemModel<StoneGolemEntity>(), 1.0F);
+		super(renderManagerIn, new StoneGolemModel<>(), 1.0F);
 		this.addLayer(new StoneGolemEyeLayer<>(this));
 	}
 	
 	protected StoneGolemRenderer(EntityRendererManager p_i50968_1_, float p_i50968_2_) {
-		super(p_i50968_1_, new StoneGolemModel<StoneGolemEntity>(), p_i50968_2_);
+		super(p_i50968_1_, new StoneGolemModel<>(), p_i50968_2_);
 	}
 	
 	public boolean shouldRender(StoneGolemEntity livingEntityIn, ClippingHelper camera, double camX, double camY, double camZ) {
@@ -55,9 +55,9 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolemEntity, StoneGolem
 			if (livingEntityIn.hasTargetedEntity()) {
 				LivingEntity livingentity = livingEntityIn.getTargetedEntity();
 				if (livingentity != null) {
-					Vector3d vec3d = this.getPosition(livingentity, (double)livingentity.getHeight() * 0.5D, 1.0F);
-					Vector3d vec3d1 = this.getPosition(livingEntityIn, (double)livingEntityIn.getEyeHeight(), 1.0F);
-					return camera.isBoundingBoxInFrustum(new AxisAlignedBB(vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y, vec3d.z));
+					Vector3d vec3d = this.getPosition(livingentity, (double)livingentity.getBbHeight() * 0.5D, 1.0F);
+					Vector3d vec3d1 = this.getPosition(livingEntityIn, livingEntityIn.getEyeHeight(), 1.0F);
+					return camera.isVisible(new AxisAlignedBB(vec3d1.x, vec3d1.y, vec3d1.z, vec3d.x, vec3d.y, vec3d.z));
 				}
 			}
 
@@ -66,9 +66,9 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolemEntity, StoneGolem
 	}
 	
 	private Vector3d getPosition(LivingEntity entityLivingBaseIn, double p_177110_2_, float p_177110_4_) {
-		double d0 = MathHelper.lerp((double)p_177110_4_, entityLivingBaseIn.lastTickPosX, entityLivingBaseIn.getPosX());
-		double d1 = MathHelper.lerp((double)p_177110_4_, entityLivingBaseIn.lastTickPosY, entityLivingBaseIn.getPosY()) + p_177110_2_;
-		double d2 = MathHelper.lerp((double)p_177110_4_, entityLivingBaseIn.lastTickPosZ, entityLivingBaseIn.getPosZ());
+		double d0 = MathHelper.lerp(p_177110_4_, entityLivingBaseIn.xOld, entityLivingBaseIn.getX());
+		double d1 = MathHelper.lerp(p_177110_4_, entityLivingBaseIn.xOld, entityLivingBaseIn.getY()) + p_177110_2_;
+		double d2 = MathHelper.lerp(p_177110_4_, entityLivingBaseIn.xOld, entityLivingBaseIn.getZ());
 		return new Vector3d(d0, d1, d2);
 	}
 	
@@ -78,20 +78,20 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolemEntity, StoneGolem
 		LivingEntity livingentity = entityIn.getTargetedEntity();
 		if (livingentity != null) {
 			float f = entityIn.getAttackAnimationScale(partialTicks);
-			float f1 = (float)entityIn.world.getGameTime() + partialTicks;
+			float f1 = (float)entityIn.level.getGameTime() + partialTicks;
 			float f2 = f1 * 0.5F % 1.0F;
 			float f3 = entityIn.getEyeHeight();
-			matrixStackIn.push();
+			matrixStackIn.pushPose();
 			matrixStackIn.translate(0.0D, (double)f3, 0.0D);
-			Vector3d vec3d = this.getPosition(livingentity, (double)livingentity.getHeight() * 0.5D, partialTicks);
+			Vector3d vec3d = this.getPosition(livingentity, (double)livingentity.getBbHeight() * 0.5D, partialTicks);
 			Vector3d vec3d1 = this.getPosition(entityIn, (double)f3, partialTicks);
 			Vector3d vec3d2 = vec3d.subtract(vec3d1);
 			float f4 = (float)(vec3d2.length() + 1.0D);
 			vec3d2 = vec3d2.normalize();
 			float f5 = (float)Math.acos(vec3d2.y);
 			float f6 = (float)Math.atan2(vec3d2.z, vec3d2.x);
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees((((float)Math.PI / 2F) - f6) * (180F / (float)Math.PI)));
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(f5 * (180F / (float)Math.PI)));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees((((float)Math.PI / 2F) - f6) * (180F / (float)Math.PI)));
+			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(f5 * (180F / (float)Math.PI)));
 			int i = 1;
 			float f7 = f1 * 0.05F * -1.5F;
 			float f8 = f * f;
@@ -121,35 +121,36 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolemEntity, StoneGolem
 			float f29 = -1.0F + f2;
 			float f30 = f4 * 2.5F + f29;
 			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(field_229107_h_);
-			MatrixStack.Entry matrixstack$entry = matrixStackIn.getLast();
-			Matrix4f matrix4f = matrixstack$entry.getMatrix();
-			Matrix3f matrix3f = matrixstack$entry.getNormal();
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f19, f4, f20, j, k, l, 0.4999F, f30);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f19, 0.0F, f20, j, k, l, 0.4999F, f29);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f21, 0.0F, f22, j, k, l, 0.0F, f29);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f21, f4, f22, j, k, l, 0.0F, f30);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f23, f4, f24, j, k, l, 0.4999F, f30);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f23, 0.0F, f24, j, k, l, 0.4999F, f29);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f25, 0.0F, f26, j, k, l, 0.0F, f29);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f25, f4, f26, j, k, l, 0.0F, f30);
+			MatrixStack.Entry matrixstack$entry = matrixStackIn.last();
+			Matrix4f matrix4f = matrixstack$entry.pose();
+			Matrix3f matrix3f = matrixstack$entry.normal();
+			vertex(ivertexbuilder, matrix4f, matrix3f, f19, f4, f20, j, k, l, 0.4999F, f30);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f19, 0.0F, f20, j, k, l, 0.4999F, f29);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f21, 0.0F, f22, j, k, l, 0.0F, f29);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f21, f4, f22, j, k, l, 0.0F, f30);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f23, f4, f24, j, k, l, 0.4999F, f30);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f23, 0.0F, f24, j, k, l, 0.4999F, f29);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f25, 0.0F, f26, j, k, l, 0.0F, f29);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f25, f4, f26, j, k, l, 0.0F, f30);
 			float f31 = 0.0F;
-			if (entityIn.ticksExisted % 2 == 0) {
+			if (entityIn.tickCount % 2 == 0) {
 				f31 = 0.5F;
 			}
 			
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f11, f4, f12, j, k, l, 0.5F, f31 + 0.5F);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f13, f4, f14, j, k, l, 1.0F, f31 + 0.5F);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f17, f4, f18, j, k, l, 1.0F, f31);
-			func_229108_a_(ivertexbuilder, matrix4f, matrix3f, f15, f4, f16, j, k, l, 0.5F, f31);
-			matrixStackIn.pop();
+			vertex(ivertexbuilder, matrix4f, matrix3f, f11, f4, f12, j, k, l, 0.5F, f31 + 0.5F);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f13, f4, f14, j, k, l, 1.0F, f31 + 0.5F);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f17, f4, f18, j, k, l, 1.0F, f31);
+			vertex(ivertexbuilder, matrix4f, matrix3f, f15, f4, f16, j, k, l, 0.5F, f31);
+			matrixStackIn.popPose();
 		}
 	}
-	
-	private static void func_229108_a_(IVertexBuilder p_229108_0_, Matrix4f p_229108_1_, Matrix3f p_229108_2_, float p_229108_3_, float p_229108_4_, float p_229108_5_, int p_229108_6_, int p_229108_7_, int p_229108_8_, float p_229108_9_, float p_229108_10_) {
-		p_229108_0_.pos(p_229108_1_, p_229108_3_, p_229108_4_, p_229108_5_).color(255, 0, 0, 200).tex(p_229108_9_, p_229108_10_).overlay(OverlayTexture.NO_OVERLAY).lightmap(15728880).normal(p_229108_2_, 0.0F, 1.0F, 0.0F).endVertex();
+
+	private static void vertex(IVertexBuilder p_229108_0_, Matrix4f p_229108_1_, Matrix3f p_229108_2_, float p_229108_3_, float p_229108_4_, float p_229108_5_, int p_229108_6_, int p_229108_7_, int p_229108_8_, float p_229108_9_, float p_229108_10_) {
+		p_229108_0_.vertex(p_229108_1_, p_229108_3_, p_229108_4_, p_229108_5_).color(255, 0, 0, 200).uv(p_229108_9_, p_229108_10_).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(p_229108_2_, 0.0F, 1.0F, 0.0F).endVertex();
 	}
-	
-	public ResourceLocation getEntityTexture(StoneGolemEntity entity) {
+
+	@Override
+	public ResourceLocation getTextureLocation(StoneGolemEntity entity) {
 		if (entity.getVariantType() == StoneGolemEntity.Type.BADLANDS) {
 			return BADLANDS;
 		} else if (entity.getVariantType() == StoneGolemEntity.Type.DARK_FOREST) {

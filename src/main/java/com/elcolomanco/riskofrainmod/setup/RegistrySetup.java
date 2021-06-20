@@ -51,7 +51,7 @@ public class RegistrySetup {
 	public static final RegistryObject<Item> CROWBAR			= ITEMS.register("crowbar",				() -> new CrowbarItem(new Item.Properties()));
 //	public static final RegistryObject<Item> FRESH_MEAT			= ITEMS.register("fresh_meat",			() -> new FreshMeatItem(new Item.Properties()));
 	public static final RegistryObject<Item> GOAT_HOOF			= ITEMS.register("goat_hoof",			() -> new GoatHoofItem(new Item.Properties()));
-	public static final RegistryObject<Item> LENS_MARKS_GLASSES	= ITEMS.register("lens_makers_glasses",	() -> new LensMakersGlassesItem(new Item.Properties()));
+	public static final RegistryObject<Item> LENS_MAKERS_GLASSES = ITEMS.register("lens_makers_glasses",	() -> new LensMakersGlassesItem(new Item.Properties()));
 //	public static final RegistryObject<Item> MEDKIT				= ITEMS.register("medkit",				() -> new MedkitItem(new Item.Properties()));
 	public static final RegistryObject<Item> SOLDIERS_SYRINGE	= ITEMS.register("soldiers_syringe",	() -> new SoldiersSyringeItem(new Item.Properties()));
 	public static final RegistryObject<Item> TOPAZ_BROOCH		= ITEMS.register("topaz_brooch",		() -> new TopazBroochItem(new Item.Properties()));
@@ -64,17 +64,17 @@ public class RegistrySetup {
 	public static final RegistryObject<Item> STONE_GOLEM_SPAWN_EGG  = ITEMS.register("stone_golem_spawn_egg", StoneGolemSpawnEggItem::new);
 	public static final RegistryObject<Item> GUNNER_DRONE_SPAWN_EGG = ITEMS.register("gunner_drone_spawn_egg", GunnerDroneSpawnEggItem::new);
 	
-	public static final RegistryObject<EntityType<GunnerDroneEntity>> GUNNER_DRONE = ENTITY_TYPES.register("gunner_drone", () -> EntityType.Builder.create(GunnerDroneEntity::new, EntityClassification.CREATURE)
-			.size(0.75F, 1.15F)
+	public static final RegistryObject<EntityType<GunnerDroneEntity>> GUNNER_DRONE = ENTITY_TYPES.register("gunner_drone", () -> EntityType.Builder.of(GunnerDroneEntity::new, EntityClassification.CREATURE)
+			.sized(0.75F, 1.15F)
 			.build("gunner_drone"));
-	public static final RegistryObject<EntityType<IronNuggetEntity>> DRONE_BULLET_ENTITY = ENTITY_TYPES.register("drone_bullet", () -> EntityType.Builder.<IronNuggetEntity>create(IronNuggetEntity::new, EntityClassification.MISC)
-			.size(0.25F, 0.25F)
+	public static final RegistryObject<EntityType<IronNuggetEntity>> DRONE_BULLET_ENTITY = ENTITY_TYPES.register("drone_bullet", () -> EntityType.Builder.<IronNuggetEntity>of(IronNuggetEntity::new, EntityClassification.MISC)
+			.sized(0.25F, 0.25F)
 			.build("drone_bullet"));
-	public static final RegistryObject<EntityType<LemurianEntity>> LEMURIAN = ENTITY_TYPES.register("lemurian", () -> EntityType.Builder.create(LemurianEntity::new, EntityClassification.MONSTER)
-			.size(0.7F, 1.72F)
+	public static final RegistryObject<EntityType<LemurianEntity>> LEMURIAN = ENTITY_TYPES.register("lemurian", () -> EntityType.Builder.of(LemurianEntity::new, EntityClassification.MONSTER)
+			.sized(0.7F, 1.72F)
 			.build("lemurian"));
-	public static final RegistryObject<EntityType<StoneGolemEntity>> STONE_GOLEM = ENTITY_TYPES.register("stone_golem", () -> EntityType.Builder.create(StoneGolemEntity::new, EntityClassification.MONSTER)
-			.size(1.85F, 3.95F)
+	public static final RegistryObject<EntityType<StoneGolemEntity>> STONE_GOLEM = ENTITY_TYPES.register("stone_golem", () -> EntityType.Builder.of(StoneGolemEntity::new, EntityClassification.MONSTER)
+			.sized(1.85F, 3.95F)
 			.build("stone_golem"));
 	
 	public static final RegistryObject<SoundEvent> DRONE_DEATH1		  = SOUNDS.register("entity.drone.death1", () -> new SoundEvent(new ResourceLocation(RoRmod.MODID, "entity.drone.death1")));

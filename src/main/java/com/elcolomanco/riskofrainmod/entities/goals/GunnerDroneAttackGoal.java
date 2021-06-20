@@ -23,58 +23,60 @@ public class GunnerDroneAttackGoal extends Goal {
     public GunnerDroneAttackGoal(GunnerDroneEntity entityIn, float maxAttackDistanceIn) {
     	this.entity = entityIn;
     	this.maxAttackDistance = maxAttackDistanceIn * maxAttackDistanceIn;
-    	this.setMutexFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+    	this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
     }
-    
-    public boolean shouldExecute() {
-    	LivingEntity livingentity = this.entity.getAttackTarget();
+
+    @Override
+    public boolean canUse() {
+    	LivingEntity livingentity = this.entity.getTarget();
     	return livingentity != null && livingentity.isAlive() && this.entity.canAttack(livingentity);
     }
     
-    public void startExecuting() {
-    	super.startExecuting();
-        this.entity.setAggroed(true);
+    public void start() {
+    	super.start();
+        this.entity.setAggressive(true);
     	this.attackStep = 0;
     }
-    
-    public void resetTask() {
-    	LivingEntity livingentity = this.entity.getAttackTarget();
-		if(!EntityPredicates.CAN_AI_TARGET.test(livingentity)) {
-			this.entity.setAttackTarget((LivingEntity)null);
+
+    @Override
+    public void stop() {
+    	LivingEntity livingentity = this.entity.getTarget();
+		if(!EntityPredicates.NO_CREATIVE_OR_SPECTATOR.test(livingentity)) {
+			this.entity.setTarget(null);
 		}
-    	this.entity.setAggroed(false);
-    	this.entity.getNavigator().clearPath();
+    	this.entity.setAggressive(false);
+    	this.entity.getNavigation().stop();
     }
-    
-    public void tick() {
+
+	public void tick() {
     	--this.attackTime;
-    	LivingEntity livingentity = this.entity.getAttackTarget();
+    	LivingEntity livingentity = this.entity.getTarget();
     	if (livingentity != null) {
-    		double d0 = this.entity.getDistanceSq(livingentity);
-    		boolean flag = this.entity.getEntitySenses().canSee(livingentity);
-    		Vector3d vec3d = this.entity.getLook(1.0F);
-    		Vector3d vec3d1 = this.entity.getLookVec().mul(1.0D, 1.0D, 1.0D).normalize().scale((double)0.01D).inverse();
+    		double d0 = this.entity.distanceToSqr(livingentity);
+    		boolean flag = this.entity.getSensing().canSee(livingentity);
+    		Vector3d vec3d = this.entity.getViewVector(1.0F);
+    		Vector3d vec3d1 = this.entity.getLookAngle().multiply(1.0D, 1.0D, 1.0D).normalize().scale(0.01D).reverse();
 			if (!flag) {
-            	this.entity.getNavigator().tryMoveToEntityLiving(livingentity, 0.8D);
+            	this.entity.getNavigation().moveTo(livingentity, 0.8D);
             }
-			if (livingentity.getPosYEye() > this.entity.getPosYEye()) {
-				Vector3d vec3d2 = this.entity.getMotion();
-					this.entity.setMotion(this.entity.getMotion().add(0.0D, ((double)0.1F - vec3d2.y) * (double)0.1F, 0.0D));
-					this.entity.isAirBorne = true;
+			if (livingentity.getEyeY() > this.entity.getEyeY()) {
+				Vector3d vec3d2 = this.entity.getDeltaMovement();
+					this.entity.setDeltaMovement(this.entity.getDeltaMovement().add(0.0D, ((double)0.1F - vec3d2.y) * (double)0.1F, 0.0D));
+					this.entity.hasImpulse = true;
 			}
     		if (d0 < (double)(this.maxAttackDistance) && flag) {
-    			if (d0 < (double)(this.maxAttackDistance * 0.3) && flag) {
-    				this.entity.setMotion(this.entity.getMotion().add(vec3d1.x, 0.0D, vec3d1.z));
+    			if (d0 < (this.maxAttackDistance * 0.3) && flag) {
+    				this.entity.setDeltaMovement(this.entity.getDeltaMovement().add(vec3d1.x, 0.0D, vec3d1.z));
     			}
-    			if (d0 > (double)(this.maxAttackDistance * 0.75) && flag) {
-    				this.entity.getNavigator().tryMoveToEntityLiving(livingentity, 0.8D);
+    			if (d0 > (this.maxAttackDistance * 0.75) && flag) {
+    				this.entity.getNavigation().moveTo(livingentity, 0.8D);
     			}
-    			this.entity.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 90.0F);
-    			this.entity.faceEntity(livingentity, 30.0F, 90.0F);
+    			this.entity.getLookControl().setLookAt(livingentity, 30.0F, 90.0F);
+    			this.entity.lookAt(livingentity, 30.0F, 90.0F);
     		}
-    		double d1 = livingentity.getPosX() - this.entity.getPosX() + vec3d.x * 4.0D;
-			double d2 = livingentity.getPosYHeight(0.3333333333333333D) - this.entity.getPosYEye();
-			double d3 = livingentity.getPosZ() - this.entity.getPosZ() + vec3d.z * 4.0D;
+    		double d1 = livingentity.getX() - this.entity.getX() + vec3d.x * 4.0D;
+			double d2 = livingentity.getY(0.3333333333333333D) - this.entity.getEyeY();
+			double d3 = livingentity.getZ() - this.entity.getZ() + vec3d.z * 4.0D;
 			
 			if (d0 < (double)(this.maxAttackDistance) && flag) {
 				if (this.attackTime <= 0) {
@@ -86,19 +88,19 @@ public class GunnerDroneAttackGoal extends Goal {
 					} else {
 						this.attackTime = 30;
 						this.attackStep = 0;
-						this.entity.setAttackTarget((LivingEntity)null);
+						this.entity.setTarget(null);
 					}
 					if (this.attackStep > 1) {
 						SoundCategory soundcategory = this.entity instanceof GunnerDroneEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
-						this.entity.world.playSound((PlayerEntity)null, entity.getPosX(), entity.getPosY(), entity.getPosZ(), RegistrySetup.GUNNER_DRONE_SHOOT.get(), soundcategory, 0.4F, 1.0F);
+						this.entity.level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), RegistrySetup.GUNNER_DRONE_SHOOT.get(), soundcategory, 0.4F, 1.0F);
 						
 						for(int i = 0; i < 1; ++i) {
-							IronNuggetEntity bullet = new IronNuggetEntity(this.entity, this.entity.world);
+							IronNuggetEntity bullet = new IronNuggetEntity(this.entity, this.entity.level);
 							bullet.shoot(d1, d2, d3, 3.0F, 1.0F);
-							this.entity.world.addEntity(bullet);
+							this.entity.level.addFreshEntity(bullet);
 						}
 					}
-					this.entity.getLookController().setLookPositionWithEntity(livingentity, 30.0F, 90.0F);
+					this.entity.getLookControl().setLookAt(livingentity, 30.0F, 90.0F);
 				}
 			}
     		super.tick();

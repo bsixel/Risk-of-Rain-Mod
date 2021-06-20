@@ -24,26 +24,26 @@ public class StoneGolemSpawnEggItem extends Item {
 	
 	public StoneGolemSpawnEggItem() {
 		super(new Item.Properties()
-				.maxStackSize(1)
-				.group(ModSetup.RIKSOFRAIN_GROUP));
+                .stacksTo(1)
+                .tab(ModSetup.RIKSOFRAIN_GROUP));
 	}
 	
 	@Override
-	public ActionResultType onItemUse(ItemUseContext context) {
-        World world = context.getWorld();
-        if (world.isRemote) {
+	public ActionResultType useOn(ItemUseContext context) {
+        World world = context.getLevel();
+        if (world.isClientSide) {
             return ActionResultType.SUCCESS;
         } else {
-            ItemStack itemstack = context.getItem();
-            BlockPos blockpos = context.getPos();
-            Direction direction = context.getFace();
+            ItemStack itemstack = context.getItemInHand();
+            BlockPos blockpos = context.getClickedPos();
+            Direction direction = context.getClickedFace();
             BlockState blockstate = world.getBlockState(blockpos);
-            TileEntity tileentity = world.getTileEntity(blockpos);
+            TileEntity tileentity = world.getBlockEntity(blockpos);
             if (tileentity instanceof MobSpawnerTileEntity) {
-                AbstractSpawner abstractspawner = ((MobSpawnerTileEntity) tileentity).getSpawnerBaseLogic();
-                abstractspawner.setEntityType(RegistrySetup.STONE_GOLEM.get());
-                tileentity.markDirty();
-                world.notifyBlockUpdate(blockpos, blockstate, blockstate, Constants.BlockFlags.BLOCK_UPDATE + Constants.BlockFlags.NOTIFY_NEIGHBORS);
+                AbstractSpawner abstractspawner = ((MobSpawnerTileEntity) tileentity).getSpawner();
+                abstractspawner.setEntityId(RegistrySetup.STONE_GOLEM.get());
+                tileentity.setChanged();
+                world.sendBlockUpdated(blockpos, blockstate, blockstate, Constants.BlockFlags.BLOCK_UPDATE + Constants.BlockFlags.NOTIFY_NEIGHBORS);
                 itemstack.shrink(1);
                 return ActionResultType.SUCCESS;
             }
@@ -51,7 +51,7 @@ public class StoneGolemSpawnEggItem extends Item {
             if (blockstate.getCollisionShape(world, blockpos).isEmpty()) {
                 blockpos1 = blockpos;
             } else {
-                blockpos1 = blockpos.offset(direction);
+                blockpos1 = blockpos.relative(direction);
             }
             if (RegistrySetup.STONE_GOLEM.get().spawn((ServerWorld)world, itemstack, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP) != null) {
                 itemstack.shrink(1);

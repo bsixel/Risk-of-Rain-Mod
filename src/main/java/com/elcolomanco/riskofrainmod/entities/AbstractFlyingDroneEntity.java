@@ -1,16 +1,10 @@
 package com.elcolomanco.riskofrainmod.entities;
 
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
 import com.elcolomanco.riskofrainmod.setup.RegistrySetup;
 import com.google.common.collect.Sets;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.controller.FlyingMovementController;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
@@ -40,6 +34,10 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Set;
+
 public abstract class AbstractFlyingDroneEntity extends TameableEntity implements IFlyingAnimal {
 	
 	private final FollowOwnerGoal followOwnerGoal = new FollowOwnerGoal(this, 1.0D, 6.0F, 4.0F, true);
@@ -55,82 +53,83 @@ public abstract class AbstractFlyingDroneEntity extends TameableEntity implement
 	
 	protected AbstractFlyingDroneEntity(EntityType<? extends AbstractFlyingDroneEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.moveController = new FlyingMovementController(this, 10, false);
-		this.setPathPriority(PathNodeType.DANGER_FIRE, -1.0F);
-		this.setPathPriority(PathNodeType.DAMAGE_FIRE, -1.0F);
-		this.setPathPriority(PathNodeType.COCOA, -1.0F);
+		this.moveControl = new FlyingMovementController(this, 10, false);
+		this.setPathfindingMalus(PathNodeType.DANGER_FIRE, -1.0F);
+		this.setPathfindingMalus(PathNodeType.DAMAGE_FIRE, -1.0F);
+		this.setPathfindingMalus(PathNodeType.COCOA, -1.0F);
 	}
-	
-	protected PathNavigator createNavigator(World worldIn) {
+
+	@Override
+	protected PathNavigator createNavigation(World worldIn) {
 		FlyingPathNavigator flyingpathnavigator = new FlyingPathNavigator(this, worldIn);
 		flyingpathnavigator.setCanOpenDoors(false);
-		flyingpathnavigator.setCanSwim(false);
-		flyingpathnavigator.setCanEnterDoors(true);
+		flyingpathnavigator.setCanFloat(false);
+		flyingpathnavigator.setCanPassDoors(true);
 		return flyingpathnavigator;
 	}
 	
 	@Override
-	protected void updateAITasks() {
-		if (this.isTamed()) {
+	protected void customServerAiStep() {
+		if (this.isTame()) {
 			this.goalSelector.addGoal(3, this.followOwnerGoal);
 			this.goalSelector.addGoal(4, this.randomFyingGoal);
 			this.goalSelector.addGoal(9, this.swimGoal);
 		}
-		if (this.isInWaterOrBubbleColumn()) {
+		if (this.isInWaterRainOrBubble()) {
 			++this.underWaterTicks;
 		} else {
 			this.underWaterTicks = 0;
 		}
 		if (this.underWaterTicks > 20) {
-			this.attackEntityFrom(DamageSource.DROWN, 1.0F);
+			this.hurt(DamageSource.DROWN, 1.0F);
 		}
 	}
 	
 	@Override
-	public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
-		ItemStack itemstack = player.getHeldItem(hand);
+	public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
+		ItemStack itemstack = player.getItemInHand(hand);
 		
 		if (itemstack.getItem() instanceof SpawnEggItem) {
-			return super.func_230254_b_(player, hand);
-		} else if (!this.isTamed() && TAME_ITEMS.contains(itemstack.getItem())) {
-			if (!player.abilities.isCreativeMode) {
+			return super.mobInteract(player, hand);
+		} else if (!this.isTame() && TAME_ITEMS.contains(itemstack.getItem())) {
+			if (!player.abilities.instabuild) {
 				itemstack.shrink(1);
 			}
 			if (!this.isSilent()) {
-				this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), RegistrySetup.COIN_PROC.get(), this.getSoundCategory(), 0.5F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+				this.level.playSound(null, this.getX(), this.getY(), this.getZ(), RegistrySetup.COIN_PROC.get(), this.getSoundSource(), 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
 			}
-			if (!this.world.isRemote) {
-				if (this.rand.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
-					this.setTamedBy(player);
-					this.navigator.clearPath();
-					this.setAttackTarget((LivingEntity)null);
-					this.func_233687_w_(true);
-					this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), RegistrySetup.DRONE_REPAIR.get(), this.getSoundCategory(), 0.5F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
-					this.world.setEntityState(this, (byte)7);
+			if (!this.level.isClientSide) {
+				if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player)) {
+					this.tame(player);
+					this.navigation.stop();
+					this.setTarget(null);
+					this.setOrderedToSit(true);
+					this.level.playSound(null, this.getX(), this.getY(), this.getZ(), RegistrySetup.DRONE_REPAIR.get(), this.getSoundSource(), 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+					this.level.broadcastEntityEvent(this, (byte)7);
 				} else {
-					this.world.setEntityState(this, (byte)6);
+					this.level.broadcastEntityEvent(this, (byte)6);
 				}
 			}
 			return ActionResultType.SUCCESS;
-		} else if (!this.isTamed() && !TAME_ITEMS.contains(itemstack.getItem())) {
-			this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), RegistrySetup.INSUFFICIENT_FOUNDS_PROC.get(), this.getSoundCategory(), 0.5F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+		} else if (!this.isTame() && !TAME_ITEMS.contains(itemstack.getItem())) {
+			this.level.playSound(null, this.getX(), this.getY(), this.getZ(), RegistrySetup.INSUFFICIENT_FOUNDS_PROC.get(), this.getSoundSource(), 0.5F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
 			return ActionResultType.SUCCESS;
-		} else if (this.isTamed() && this.isOwner(player) && !this.isRepairItem(itemstack)) {
-			if (!this.world.isRemote) {
-				this.func_233687_w_(!this.isSitting());
-				this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), RegistrySetup.DRONE_REPAIR.get(), this.getSoundCategory(), 0.2F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+		} else if (this.isTame() && this.isOwnedBy(player) && !this.isRepairItem(itemstack)) {
+			if (!this.level.isClientSide) {
+				this.setOrderedToSit(!this.isInSittingPose());
+				this.level.playSound(null, this.getX(), this.getY(), this.getZ(), RegistrySetup.DRONE_REPAIR.get(), this.getSoundSource(), 0.2F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
 			}
 			return ActionResultType.SUCCESS;
-		} else if (this.isTamed() && this.getHealth() < this.getMaxHealth()) {
+		} else if (this.isTame() && this.getHealth() < this.getMaxHealth()) {
 			if (this.isRepairItem(itemstack)) {
-				if (!player.abilities.isCreativeMode) {
+				if (!player.abilities.instabuild) {
 					itemstack.shrink(1);
 				}
 				this.heal(2.0F);
 				return ActionResultType.SUCCESS;
 			}
 		}
-		return super.func_230254_b_(player, hand);
+		return super.mobInteract(player, hand);
 	}
 	
 	public boolean isRepairItem(ItemStack stack) {
@@ -139,7 +138,7 @@ public abstract class AbstractFlyingDroneEntity extends TameableEntity implement
 	}
 	
 	public void livingTick() {
-		if (!this.isTamed() || this.onGround || this.isSitting()) {
+		if (!this.isTame() || this.onGround || this.isInSittingPose()) {
 			flyingSound = 0;
 		} else {
 			++flyingSound;
@@ -149,31 +148,31 @@ public abstract class AbstractFlyingDroneEntity extends TameableEntity implement
 			flyingSound = 1;
 		}
 		if (this.isLowHealth()) {
-			for(int i = 0; i < this.rand.nextInt(2) + 1; ++i) {
-				this.addParticle(this.world, this.getPosX() - (double)0.3F, this.getPosX() + (double)0.3F, this.getPosZ() - (double)0.3F, this.getPosZ() + (double)0.3F, this.getPosYHeight(0.5D), ParticleTypes.SMOKE);
+			for(int i = 0; i < this.random.nextInt(2) + 1; ++i) {
+				this.addParticle(this.level, this.getX() - (double)0.3F, this.getX() + (double)0.3F, this.getZ() - (double)0.3F, this.getZ() + (double)0.3F, this.getY(0.5D), ParticleTypes.SMOKE);
 			}
 		}
-		Vector3d vec3d = this.getMotion();
-		if (this.isSitting()) {
-			this.setMotion(this.getMotion().add(0.0D, ((double)-0.1F - vec3d.y), 0.0D));
+		Vector3d vec3d = this.getDeltaMovement();
+		if (this.isInSittingPose()) {
+			this.setDeltaMovement(this.getDeltaMovement().add(0.0D, ((double)-0.1F - vec3d.y), 0.0D));
 		}
-		super.livingTick();
+		super.aiStep();
 		this.updateBodyPitch();
 	}
 	
-	public boolean attackEntityFrom(DamageSource source, float amount) {
+	public boolean hurt(DamageSource source, float amount) {
 		if (this.isInvulnerableTo(source)) {
 			return false;
 		} else {
-			this.func_233687_w_(false);
-			return super.attackEntityFrom(source, amount);
+			this.setOrderedToSit(false);
+			return super.hurt(source, amount);
 		}
 	}
 	
 	@Override
-	public void onDeath(DamageSource cause) {
+	public void die(DamageSource cause) {
 		this.playSound(this.getDeathSound2(), 0.6F, 1.0F);
-		super.onDeath(cause);
+		super.die(cause);
 	}
 	
 	@Override
@@ -216,22 +215,25 @@ public abstract class AbstractFlyingDroneEntity extends TameableEntity implement
 	}
 	
 	private void addParticle(World worldIn, double p_226397_2_, double p_226397_4_, double p_226397_6_, double p_226397_8_, double posY, IParticleData particleData) {
-		worldIn.addParticle(particleData, MathHelper.lerp(worldIn.rand.nextDouble(), p_226397_2_, p_226397_4_), posY, MathHelper.lerp(worldIn.rand.nextDouble(), p_226397_6_, p_226397_8_), 0.0D, 0.0D, 0.0D);
+		worldIn.addParticle(particleData, MathHelper.lerp(worldIn.random.nextDouble(), p_226397_2_, p_226397_4_), posY, MathHelper.lerp(worldIn.random.nextDouble(), p_226397_6_, p_226397_8_), 0.0D, 0.0D, 0.0D);
 	}
-	
-	public boolean onLivingFall(float distance, float damageMultiplier) {
+
+	@Override
+	public boolean causeFallDamage(float distance, float damageMultiplier) {
 		return false;
 	}
 	
 	@Override
-	protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
+	protected void checkFallDamage(double y, boolean onGroundIn, @Nonnull BlockState state, @Nonnull BlockPos pos) {
 	}
-	
-	public boolean isBreedingItem(ItemStack stack) {
+
+	@Override
+	public boolean isFood(@Nonnull ItemStack stack) {
 		return false;
 	}
-	
-	public boolean canMateWith(AnimalEntity otherAnimal) {
+
+	@Override
+	public boolean canMate(@Nonnull AnimalEntity otherAnimal) {
 		return false;
 	}
 	
@@ -240,16 +242,12 @@ public abstract class AbstractFlyingDroneEntity extends TameableEntity implement
 	}
 	
 	public boolean isDroneMoving() {
-		if(this.prevPosX != this.getPosX() || this.prevPosZ != this.getPosZ()) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.xOld != this.getX() || this.zOld != this.getZ() || this.yOld != this.getY();
 	}
 
 	@Nullable
 	@Override
-	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+	public AgeableEntity getBreedOffspring(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		return null;
 	}
 }

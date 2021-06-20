@@ -105,371 +105,371 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends EntityModel<T> 
     public ModelRenderer right_leg2_2;
 
     public StoneGolemModel() {
-    	this.textureWidth = 422;
-        this.textureHeight = 157;
+    	this.texWidth = 422;
+        this.texHeight = 157;
 
         this.core = new ModelRenderer(this, 1, 149);
-        this.core.setRotationPoint(0.0F, -8.5F, 0.0F);
+        this.core.setPos(0.0F, -8.5F, 0.0F);
         this.core.addBox(-5.0F, -1.5F, -2.5F, 10, 2, 5, 0.0F);
 
         this.torso_axis = new ModelRenderer(this, 32, 154);
-        this.torso_axis.setRotationPoint(0.0F, -2.5F, 0.0F);
+        this.torso_axis.setPos(0.0F, -2.5F, 0.0F);
         this.torso_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.torso = new ModelRenderer(this, 1, 49);
-        this.torso.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.torso.setPos(0.0F, 0.0F, 0.0F);
         this.torso.addBox(-12.5F, -0.5F, -3.5F, 25, 1, 7, 0.0F);
 
         this.torso2 = new ModelRenderer(this, 66, 41);
-        this.torso2.setRotationPoint(0.0F, -0.5F, 0.0F);
+        this.torso2.setPos(0.0F, -0.5F, 0.0F);
         this.torso2.addBox(-13.5F, -8.0F, -4.0F, 27, 8, 8, 0.0F);
 
         this.torso3 = new ModelRenderer(this, 137, 47);
-        this.torso3.setRotationPoint(0.0F, -8.0F, 0.0F);
+        this.torso3.setPos(0.0F, -8.0F, 0.0F);
         this.torso3.addBox(-12.5F, -2.0F, -4.0F, 25, 2, 8, 0.0F);
 
         this.torso4 = new ModelRenderer(this, 204, 47);
-        this.torso4.setRotationPoint(0.0F, -1.0F, 0.0F);
+        this.torso4.setPos(0.0F, -1.0F, 0.0F);
         this.torso4.addBox(-12.5F, -3.0F, -4.0F, 24, 2, 8, 0.0F);
 
         this.torso5 = new ModelRenderer(this, 269, 49);
-        this.torso5.setRotationPoint(0.0F, -2.0F, 0.0F);
+        this.torso5.setPos(0.0F, -2.0F, 0.0F);
         this.torso5.addBox(-11.5F, -2.0F, -3.5F, 22, 1, 7, 0.0F);
 
         this.torso6 = new ModelRenderer(this, 328, 54);
-        this.torso6.setRotationPoint(-9.5F, -2.0F, -2.5F);
+        this.torso6.setPos(-9.5F, -2.0F, -2.5F);
         this.torso6.addBox(-1.0F, -1.0F, -1.0F, 2, 1, 2, 0.0F);
 
         this.neck_axis = new ModelRenderer(this, 37, 154);
-        this.neck_axis.setRotationPoint(-0.0F, -3.0F, 0.0F);
+        this.neck_axis.setPos(-0.0F, -3.0F, 0.0F);
         this.neck_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.neck = new ModelRenderer(this, 1, 35);
-        this.neck.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.neck.setPos(0.0F, 0.0F, 0.0F);
         this.neck.addBox(-3.0F, -0.5F, -2.0F, 6, 1, 4, 0.0F);
 
         this.head_axis = new ModelRenderer(this, 42, 154);
-        this.head_axis.setRotationPoint(0.0F, -2.0F, 0.0F);
+        this.head_axis.setPos(0.0F, -2.0F, 0.0F);
         this.head_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.head = new ModelRenderer(this, 1, 26);
-        this.head.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.head.setPos(0.0F, 0.0F, 0.0F);
         this.head.addBox(-9.0F, -0.5F, -3.5F, 18, 1, 7, 0.0F);
 
         this.head2 = new ModelRenderer(this, 52, 25);
-        this.head2.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.head2.setPos(0.0F, 0.0F, 0.0F);
         this.head2.addBox(-11.0F, -1.5F, -4.0F, 22, 1, 8, 0.0F);
 
         this.head3_1 = new ModelRenderer(this, 137, 15);
-        this.head3_1.setRotationPoint(-2.0F, -1.5F, 0.0F);
+        this.head3_1.setPos(-2.0F, -1.5F, 0.0F);
         this.head3_1.addBox(-10.0F, -1.0F, -4.0F, 10, 1, 8, 0.0F);
 
         this.head3_2 = new ModelRenderer(this, 1, 15);
-        this.head3_2.setRotationPoint(2.0F, -1.5F, 0.0F);
+        this.head3_2.setPos(2.0F, -1.5F, 0.0F);
         this.head3_2.addBox(0.0F, -1.0F, -4.0F, 10, 1, 8, 0.0F);
 
         this.head4_1 = new ModelRenderer(this, 174, 12);
-        this.head4_1.setRotationPoint(-1.0F, -1.0F, 0.0F);
+        this.head4_1.setPos(-1.0F, -1.0F, 0.0F);
         this.head4_1.addBox(-9.0F, -4.0F, -4.0F, 9, 4, 8, 0.0F);
 
         this.head4_2 = new ModelRenderer(this, 38, 12);
-        this.head4_2.setRotationPoint(1.0F, -1.0F, 0.0F);
+        this.head4_2.setPos(1.0F, -1.0F, 0.0F);
         this.head4_2.addBox(0.0F, -4.0F, -4.0F, 9, 4, 8, 0.0F);
 
         this.head5_1 = new ModelRenderer(this, 209, 15);
-        this.head5_1.setRotationPoint(1.0F, -4.0F, 0.0F);
+        this.head5_1.setPos(1.0F, -4.0F, 0.0F);
         this.head5_1.addBox(-10.0F, -1.0F, -4.0F, 10, 1, 8, 0.0F);
 
         this.head5_2 = new ModelRenderer(this, 73, 15);
-        this.head5_2.setRotationPoint(-1.0F, -4.0F, 0.0F);
+        this.head5_2.setPos(-1.0F, -4.0F, 0.0F);
         this.head5_2.addBox(0.0F, -1.0F, -4.0F, 10, 1, 8, 0.0F);
 
         this.head6 = new ModelRenderer(this, 1, 1);
-        this.head6.setRotationPoint(-2.0F, -1.0F, 0.0F);
+        this.head6.setPos(-2.0F, -1.0F, 0.0F);
         this.head6.addBox(-11.0F, -1.0F, -4.0F, 23, 1, 8, 0.0F);
 
         this.head7_1 = new ModelRenderer(this, 130, 4);
-        this.head7_1.setRotationPoint(-8.5F, -1.0F, 1.5F);
+        this.head7_1.setPos(-8.5F, -1.0F, 1.5F);
         this.head7_1.addBox(-1.5F, -1.0F, -2.5F, 3, 1, 5, 0.0F);
 
         this.head7_2 = new ModelRenderer(this, 111, 2);
-        this.head7_2.setRotationPoint(-5.0F, -1.0F, 0.5F);
+        this.head7_2.setPos(-5.0F, -1.0F, 0.5F);
         this.head7_2.addBox(-2.0F, -1.0F, -3.5F, 2, 1, 7, 0.0F);
 
         this.head7_3 = new ModelRenderer(this, 64, 2);
-        this.head7_3.setRotationPoint(-5.0F, -1.0F, 0.0F);
+        this.head7_3.setPos(-5.0F, -1.0F, 0.0F);
         this.head7_3.addBox(0.0F, -1.0F, -3.5F, 16, 1, 7, 0.0F);
 
         this.head8_1 = new ModelRenderer(this, 173, 8);
-        this.head8_1.setRotationPoint(7.0F, -1.0F, -3.0F);
+        this.head8_1.setPos(7.0F, -1.0F, -3.0F);
         this.head8_1.addBox(-1.0F, -1.0F, -0.5F, 2, 1, 1, 0.0F);
 
         this.head8_2_1 = new ModelRenderer(this, 147, 5);
-        this.head8_2_1.setRotationPoint(13.0F, -1.0F, -2.0F);
+        this.head8_2_1.setPos(13.0F, -1.0F, -2.0F);
         this.head8_2_1.addBox(-2.0F, -1.0F, -1.5F, 4, 1, 4, 0.0F);
 
         this.head8_2_2 = new ModelRenderer(this, 164, 7);
-        this.head8_2_2.setRotationPoint(0.0F, -1.0F, 0.0F);
+        this.head8_2_2.setPos(0.0F, -1.0F, 0.0F);
         this.head8_2_2.addBox(-1.0F, -1.0F, -1.0F, 2, 1, 2, 0.0F);
 
         this.eye = new ModelRenderer(this, 110, 11);
-        this.eye.setRotationPoint(0.0F, -1.5F, 0.5F);
+        this.eye.setPos(0.0F, -1.5F, 0.5F);
         this.eye.addBox(-3.0F, -6.0F, -3.5F, 6, 6, 7, 0.0F);
 
         this.left_shoulder_axis = new ModelRenderer(this, 47, 154);
-        this.left_shoulder_axis.setRotationPoint(16.5F, -1.5F, 0.0F);
+        this.left_shoulder_axis.setPos(16.5F, -1.5F, 0.0F);
         this.left_shoulder_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.left_shoulder = new ModelRenderer(this, 1, 67);
-        this.left_shoulder.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.left_shoulder.setPos(0.0F, 0.0F, 0.0F);
         this.left_shoulder.addBox(-2.5F, -0.5F, -2.5F, 5, 1, 5, 0.0F);
         this.setRotateAngle(left_shoulder, 0.0F, 0.0F, -0.5235987755982988F);
 
         this.left_shoulder2 = new ModelRenderer(this, 23, 58);
-        this.left_shoulder2.setRotationPoint(0.5F, 1.5F, 0.0F);
+        this.left_shoulder2.setPos(0.5F, 1.5F, 0.0F);
         this.left_shoulder2.addBox(-4.0F, -1.0F, -4.0F, 8, 7, 8, 0.0F);
 
         this.left_shoulder3 = new ModelRenderer(this, 56, 66);
-        this.left_shoulder3.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.left_shoulder3.setPos(0.0F, 0.0F, 0.0F);
         this.left_shoulder3.addBox(-3.0F, 6.0F, -3.0F, 6, 1, 6, 0.0F);
 
         this.left_arm1_axis = new ModelRenderer(this, 52, 154);
-        this.left_arm1_axis.setRotationPoint(-2.0F, 9.0F, 0.0F);
+        this.left_arm1_axis.setPos(-2.0F, 9.0F, 0.0F);
         this.left_arm1_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         this.setRotateAngle(left_arm1_axis, 0.0F, 0.0F, 0.5235987755982988F);
 
         this.left_arm1 = new ModelRenderer(this, 81, 68);
-        this.left_arm1.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.left_arm1.setPos(0.0F, 0.0F, 0.0F);
         this.left_arm1.addBox(-3.0F, -0.5F, -2.0F, 6, 1, 4, 0.0F);
         this.setRotateAngle(left_arm1, 0.0F, -0.08726646259971647F, -0.2617993877991494F);
 
         this.left_arm1_1 = new ModelRenderer(this, 102, 67);
-        this.left_arm1_1.setRotationPoint(0.0F, 0.5F, 0.0F);
+        this.left_arm1_1.setPos(0.0F, 0.5F, 0.0F);
         this.left_arm1_1.addBox(-3.5F, 0.0F, -2.5F, 7, 1, 5, 0.0F);
 
         this.left_arm2_axis = new ModelRenderer(this, 57, 154);
-        this.left_arm2_axis.setRotationPoint(0.0F, 2.5F, 0.0F);
+        this.left_arm2_axis.setPos(0.0F, 2.5F, 0.0F);
         this.left_arm2_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         this.setRotateAngle(left_arm2_axis, 0.0F, 0.0F, 0.2617993877991494F);
 
         this.left_arm2 = new ModelRenderer(this, 127, 67);
-        this.left_arm2.setRotationPoint(0.0F, 0.0F, -0.5F);
+        this.left_arm2.setPos(0.0F, 0.0F, -0.5F);
         this.left_arm2.addBox(-4.5F, -0.5F, -2.0F, 9, 2, 4, 0.0F);
         this.setRotateAngle(left_arm2, 0.0F, 0.0F, -0.08726646259971647F);
 
         this.left_forearm_axis = new ModelRenderer(this, 62, 154);
-        this.left_forearm_axis.setRotationPoint(0.0F, 3.5F, 0.0F);
+        this.left_forearm_axis.setPos(0.0F, 3.5F, 0.0F);
         this.left_forearm_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         this.setRotateAngle(left_forearm_axis, 0.0F, 0.0F, 0.08726646259971647F);
 
         this.left_forearm = new ModelRenderer(this, 1, 87);
-        this.left_forearm.setRotationPoint(-1.0F, 0.0F, -1.0F);
+        this.left_forearm.setPos(-1.0F, 0.0F, -1.0F);
         this.left_forearm.addBox(-3.0F, -0.5F, -4.0F, 6, 1, 8, 0.0F);
         this.setRotateAngle(left_forearm, 0.0F, -0.08726646259971647F, 0.0F);
 
         this.left_forearm2 = new ModelRenderer(this, 30, 74);
-        this.left_forearm2.setRotationPoint(0.5F, 0.5F, 0.5F);
+        this.left_forearm2.setPos(0.5F, 0.5F, 0.5F);
         this.left_forearm2.addBox(-4.0F, 0.0F, -5.0F, 8, 12, 10, 0.0F);
 
         this.left_forearm3 = new ModelRenderer(this, 67, 87);
-        this.left_forearm3.setRotationPoint(0.0F, 12.0F, -0.5F);
+        this.left_forearm3.setPos(0.0F, 12.0F, -0.5F);
         this.left_forearm3.addBox(-3.0F, 0.0F, -4.0F, 6, 1, 8, 0.0F);
 
         this.left_hand1 = new ModelRenderer(this, 96, 88);
-        this.left_hand1.setRotationPoint(0.0F, 0.0F, -0.5F);
+        this.left_hand1.setPos(0.0F, 0.0F, -0.5F);
         this.left_hand1.addBox(-2.5F, -0.5F, -3.5F, 5, 1, 7, 0.0F);
 
         this.left_hand1_axis = new ModelRenderer(this, 67, 154);
-        this.left_hand1_axis.setRotationPoint(-0.5F, 2.0F, 0.5F);
+        this.left_hand1_axis.setPos(-0.5F, 2.0F, 0.5F);
         this.left_hand1_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.left_hand1_1 = new ModelRenderer(this, 121, 88);
-        this.left_hand1_1.setRotationPoint(0.5F, 0.0F, 0.0F);
+        this.left_hand1_1.setPos(0.5F, 0.0F, 0.0F);
         this.left_hand1_1.addBox(-2.0F, 0.5F, -3.5F, 4, 1, 7, 0.0F);
 
         this.left_hand2_axis = new ModelRenderer(this, 72, 154);
-        this.left_hand2_axis.setRotationPoint(1.0F, 2.5F, 0.0F);
+        this.left_hand2_axis.setPos(1.0F, 2.5F, 0.0F);
         this.left_hand2_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.left_hand2 = new ModelRenderer(this, 144, 86);
-        this.left_hand2.setRotationPoint(-1.0F, 0.0F, 0.0F);
+        this.left_hand2.setPos(-1.0F, 0.0F, 0.0F);
         this.left_hand2.addBox(-2.5F, -0.5F, -3.5F, 5, 3, 7, 0.0F);
 
         this.left_hand2_1 = new ModelRenderer(this, 169, 88);
-        this.left_hand2_1.setRotationPoint(-0.5F, 2.5F, 0.0F);
+        this.left_hand2_1.setPos(-0.5F, 2.5F, 0.0F);
         this.left_hand2_1.addBox(-2.0F, 0.0F, -3.0F, 4, 2, 6, 0.0F);
 
         this.left_thumb = new ModelRenderer(this, 190, 88);
-        this.left_thumb.setRotationPoint(-2.0F, 6.5F, -6.0F);
+        this.left_thumb.setPos(-2.0F, 6.5F, -6.0F);
         this.left_thumb.addBox(-1.5F, 0.0F, -1.5F, 3, 5, 3, 0.0F);
 
         this.right_shoulder_axis = new ModelRenderer(this, 77, 154);
-        this.right_shoulder_axis.setRotationPoint(-15.5F, 0.0F, 0.0F);
+        this.right_shoulder_axis.setPos(-15.5F, 0.0F, 0.0F);
         this.right_shoulder_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.right_shoulder = new ModelRenderer(this, 154, 59);
-        this.right_shoulder.setRotationPoint(0.0F, 0.0F, 0.5F);
+        this.right_shoulder.setPos(0.0F, 0.0F, 0.5F);
         this.right_shoulder.addBox(-3.0F, -0.5F, -6.0F, 6, 2, 12, 0.0F);
         this.setRotateAngle(right_shoulder, 0.0F, 0.0F, 0.7853981633974483F);
 
         this.right_arm_axis = new ModelRenderer(this, 82, 154);
-        this.right_arm_axis.setRotationPoint(1.0F, 4.0F, 0.0F);
+        this.right_arm_axis.setPos(1.0F, 4.0F, 0.0F);
         this.right_arm_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         this.setRotateAngle(right_arm_axis, 0.0F, 0.0F, -0.7853981633974483F);
 
         this.right_arm = new ModelRenderer(this, 191, 67);
-        this.right_arm.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.right_arm.setPos(0.0F, 0.0F, 0.0F);
         this.right_arm.addBox(-2.5F, -0.5F, -2.5F, 5, 1, 5, 0.0F);
         this.setRotateAngle(right_arm, 0.0F, 0.08726646259971647F, 0.39269908169872414F);
 
         this.right_arm2 = new ModelRenderer(this, 212, 58);
-        this.right_arm2.setRotationPoint(-0.5F, 1.5F, 0.0F);
+        this.right_arm2.setPos(-0.5F, 1.5F, 0.0F);
         this.right_arm2.addBox(-4.0F, -1.0F, -4.0F, 8, 7, 8, 0.0F);
 
         this.right_arm3 = new ModelRenderer(this, 245, 66);
-        this.right_arm3.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.right_arm3.setPos(0.0F, 0.0F, 0.0F);
         this.right_arm3.addBox(-3.0F, 6.0F, -3.0F, 6, 1, 6, 0.0F);
 
         this.right_elbow_axis = new ModelRenderer(this, 87, 154);
-        this.right_elbow_axis.setRotationPoint(0.5F, 9.0F, 0.0F);
+        this.right_elbow_axis.setPos(0.5F, 9.0F, 0.0F);
         this.right_elbow_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
         this.setRotateAngle(right_elbow_axis, 0.0F, 0.0F, -0.39269908169872414F);
 
         this.right_elbow = new ModelRenderer(this, 203, 91);
-        this.right_elbow.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.right_elbow.setPos(0.0F, 0.0F, 0.0F);
         this.right_elbow.addBox(-2.0F, -0.5F, -2.0F, 4, 1, 4, 0.0F);
 
         this.right_forearm_axis = new ModelRenderer(this, 92, 154);
-        this.right_forearm_axis.setRotationPoint(0.0F, 2.0F, 0.0F);
+        this.right_forearm_axis.setPos(0.0F, 2.0F, 0.0F);
         this.right_forearm_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.right_forearm = new ModelRenderer(this, 220, 87);
-        this.right_forearm.setRotationPoint(-1.0F, 0.0F, -1.0F);
+        this.right_forearm.setPos(-1.0F, 0.0F, -1.0F);
         this.right_forearm.addBox(-3.0F, -0.5F, -4.0F, 6, 1, 8, 0.0F);
         this.setRotateAngle(right_forearm, 0.0F, 0.08726646259971647F, 0.0F);
 
         this.right_forearm2 = new ModelRenderer(this, 249, 74);
-        this.right_forearm2.setRotationPoint(0.5F, 0.5F, 0.5F);
+        this.right_forearm2.setPos(0.5F, 0.5F, 0.5F);
         this.right_forearm2.addBox(-4.0F, 0.0F, -5.0F, 8, 12, 10, 0.0F);
 
         this.right_forearm3 = new ModelRenderer(this, 286, 87);
-        this.right_forearm3.setRotationPoint(0.0F, 12.0F, -0.5F);
+        this.right_forearm3.setPos(0.0F, 12.0F, -0.5F);
         this.right_forearm3.addBox(-3.0F, 0.0F, -4.0F, 6, 1, 8, 0.0F);
 
         this.right_hand1_axis = new ModelRenderer(this, 97, 154);
-        this.right_hand1_axis.setRotationPoint(0.5F, 2.0F, 0.5F);
+        this.right_hand1_axis.setPos(0.5F, 2.0F, 0.5F);
         this.right_hand1_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.right_hand1 = new ModelRenderer(this, 315, 88);
-        this.right_hand1.setRotationPoint(0.0F, 0.0F, -0.5F);
+        this.right_hand1.setPos(0.0F, 0.0F, -0.5F);
         this.right_hand1.addBox(-2.5F, -0.5F, -3.5F, 5, 1, 7, 0.0F);
 
         this.right_hand1_1 = new ModelRenderer(this, 340, 88);
-        this.right_hand1_1.setRotationPoint(-0.5F, 0.0F, 0.0F);
+        this.right_hand1_1.setPos(-0.5F, 0.0F, 0.0F);
         this.right_hand1_1.addBox(-2.0F, 0.5F, -3.5F, 4, 1, 7, 0.0F);
 
         this.right_hand2_axis = new ModelRenderer(this, 102, 154);
-        this.right_hand2_axis.setRotationPoint(0.5F, 2.5F, 0.0F);
+        this.right_hand2_axis.setPos(0.5F, 2.5F, 0.0F);
         this.right_hand2_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.right_hand2 = new ModelRenderer(this, 363, 86);
-        this.right_hand2.setRotationPoint(-0.5F, 0.0F, 0.0F);
+        this.right_hand2.setPos(-0.5F, 0.0F, 0.0F);
         this.right_hand2.addBox(-2.5F, -0.5F, -3.5F, 5, 3, 7, 0.0F);
 
         this.right_hand2_1 = new ModelRenderer(this, 388, 88);
-        this.right_hand2_1.setRotationPoint(0.5F, 2.5F, 0.0F);
+        this.right_hand2_1.setPos(0.5F, 2.5F, 0.0F);
         this.right_hand2_1.addBox(-2.0F, 0.0F, -3.0F, 4, 2, 6, 0.0F);
 
         this.right_thumb = new ModelRenderer(this, 409, 88);
-        this.right_thumb.setRotationPoint(2.0F, 6.5F, -6.0F);
+        this.right_thumb.setPos(2.0F, 6.5F, -6.0F);
         this.right_thumb.addBox(-1.5F, 0.0F, -1.5F, 3, 5, 3, 0.0F);
 
         this.hip_axis = new ModelRenderer(this, 107, 154);
-        this.hip_axis.setRotationPoint(0.0F, 1.5F, 0.0F);
+        this.hip_axis.setPos(0.0F, 1.5F, 0.0F);
         this.hip_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.hip = new ModelRenderer(this, 1, 97);
-        this.hip.setRotationPoint(0.0F, 2.0F, 0.0F);
+        this.hip.setPos(0.0F, 2.0F, 0.0F);
         this.hip.addBox(-11.0F, -2.5F, -3.0F, 22, 4, 6, 0.0F);
 
         this.hip2 = new ModelRenderer(this, 58, 101);
-        this.hip2.setRotationPoint(0.0F, 1.5F, 0.0F);
+        this.hip2.setPos(0.0F, 1.5F, 0.0F);
         this.hip2.addBox(-5.0F, 0.0F, -2.5F, 10, 1, 5, 0.0F);
 
         this.hip3_1 = new ModelRenderer(this, 110, 101);
-        this.hip3_1.setRotationPoint(-8.0F, -5.0F, 0.0F);
+        this.hip3_1.setPos(-8.0F, -5.0F, 0.0F);
         this.hip3_1.addBox(-2.5F, 0.0F, -2.5F, 5, 1, 5, 0.0F);
 
         this.hip3_2 = new ModelRenderer(this, 89, 101);
-        this.hip3_2.setRotationPoint(8.0F, -5.0F, 0.0F);
+        this.hip3_2.setPos(8.0F, -5.0F, 0.0F);
         this.hip3_2.addBox(-2.5F, 0.0F, -2.5F, 5, 1, 5, 0.0F);
 
         this.left_leg_axis = new ModelRenderer(this, 112, 154);
-        this.left_leg_axis.setRotationPoint(9.0F, 3.0F, 0.0F);
+        this.left_leg_axis.setPos(9.0F, 3.0F, 0.0F);
         this.left_leg_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.left_leg = new ModelRenderer(this, 1, 121);
-        this.left_leg.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.left_leg.setPos(0.0F, 0.0F, 0.0F);
         this.left_leg.addBox(-3.0F, -0.5F, -3.0F, 6, 1, 6, 0.0F);
         this.setRotateAngle(left_leg, 0.0F, -0.17453292519943295F, 0.0F);
 
         this.left_leg1_1 = new ModelRenderer(this, 26, 109);
-        this.left_leg1_1.setRotationPoint(0.5F, 0.5F, 0.5F);
+        this.left_leg1_1.setPos(0.5F, 0.5F, 0.5F);
         this.left_leg1_1.addBox(-4.5F, 0.0F, -4.5F, 8, 11, 8, 0.0F);
 
         this.left_leg1_2 = new ModelRenderer(this, 59, 120);
-        this.left_leg1_2.setRotationPoint(-0.5F, 11.0F, -0.5F);
+        this.left_leg1_2.setPos(-0.5F, 11.0F, -0.5F);
         this.left_leg1_2.addBox(-3.5F, 0.0F, -3.5F, 7, 1, 7, 0.0F);
 
         this.left_leg2_axis = new ModelRenderer(this, 117, 154);
-        this.left_leg2_axis.setRotationPoint(-0.5F, 2.0F, 0.0F);
+        this.left_leg2_axis.setPos(-0.5F, 2.0F, 0.0F);
         this.left_leg2_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.left_leg2 = new ModelRenderer(this, 1, 141);
-        this.left_leg2.setRotationPoint(0.0F, 0.0F, -1.0F);
+        this.left_leg2.setPos(0.0F, 0.0F, -1.0F);
         this.left_leg2.addBox(-2.5F, -0.5F, -3.0F, 5, 1, 6, 0.0F);
         this.setRotateAngle(left_leg2, 0.0F, -0.08726646259971647F, 0.0F);
 
         this.left_leg2_1 = new ModelRenderer(this, 24, 129);
-        this.left_leg2_1.setRotationPoint(0.5F, 0.5F, 1.0F);
+        this.left_leg2_1.setPos(0.5F, 0.5F, 1.0F);
         this.left_leg2_1.addBox(-3.5F, 0.0F, -4.5F, 7, 10, 9, 0.0F);
 
         this.left_leg2_2 = new ModelRenderer(this, 57, 139);
-        this.left_leg2_2.setRotationPoint(1.0F, 10.0F, 0.0F);
+        this.left_leg2_2.setPos(1.0F, 10.0F, 0.0F);
         this.left_leg2_2.addBox(-3.5F, 0.0F, -3.5F, 5, 2, 7, 0.0F);
 
         this.right_leg_axis = new ModelRenderer(this, 122, 154);
-        this.right_leg_axis.setRotationPoint(-10.0F, 3.0F, 0.0F);
+        this.right_leg_axis.setPos(-10.0F, 3.0F, 0.0F);
         this.right_leg_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.right_leg = new ModelRenderer(this, 88, 121);
-        this.right_leg.setRotationPoint(0.0F, 0.0F, 0.0F);
+        this.right_leg.setPos(0.0F, 0.0F, 0.0F);
         this.right_leg.addBox(-3.0F, -0.5F, -3.0F, 7, 1, 6, 0.0F);
         this.setRotateAngle(right_leg, 0.0F, 0.17453292519943295F, 0.0F);
 
         this.right_leg1_1 = new ModelRenderer(this, 115, 108);
-        this.right_leg1_1.setRotationPoint(0.5F, 0.5F, 0.0F);
+        this.right_leg1_1.setPos(0.5F, 0.5F, 0.0F);
         this.right_leg1_1.addBox(-4.5F, 0.0F, -4.0F, 9, 12, 8, 0.0F);
 
         this.right_leg1_2 = new ModelRenderer(this, 150, 121);
-        this.right_leg1_2.setRotationPoint(0.0F, 12.0F, 0.0F);
+        this.right_leg1_2.setPos(0.0F, 12.0F, 0.0F);
         this.right_leg1_2.addBox(-3.5F, 0.0F, -3.0F, 7, 1, 6, 0.0F);
 
         this.right_leg2_axis = new ModelRenderer(this, 127, 154);
-        this.right_leg2_axis.setRotationPoint(0.5F, 2.0F, 0.0F);
+        this.right_leg2_axis.setPos(0.5F, 2.0F, 0.0F);
         this.right_leg2_axis.addBox(-0.5F, -0.5F, -0.5F, 1, 1, 1, 0.0F);
 
         this.right_leg2 = new ModelRenderer(this, 82, 141);
-        this.right_leg2.setRotationPoint(0.0F, 0.0F, 1.0F);
+        this.right_leg2.setPos(0.0F, 0.0F, 1.0F);
         this.right_leg2.addBox(-2.5F, -0.5F, -3.0F, 5, 1, 6, 0.0F);
         this.setRotateAngle(right_leg2, 0.0F, 0.08726646259971647F, 0.0F);
 
         this.right_leg2_1 = new ModelRenderer(this, 105, 130);
-        this.right_leg2_1.setRotationPoint(0.0F, 0.5F, -0.5F);
+        this.right_leg2_1.setPos(0.0F, 0.5F, -0.5F);
         this.right_leg2_1.addBox(-3.5F, 0.0F, -4.5F, 7, 9, 9, 0.0F);
 
         this.right_leg2_2 = new ModelRenderer(this, 138, 139);
-        this.right_leg2_2.setRotationPoint(1.0F, 9.0F, 0.0F);
+        this.right_leg2_2.setPos(1.0F, 9.0F, 0.0F);
         this.right_leg2_2.addBox(-3.5F, 0.0F, -3.5F, 5, 2, 7, 0.0F);
 
         // Child setup
@@ -570,86 +570,86 @@ public class StoneGolemModel<T extends StoneGolemEntity> extends EntityModel<T> 
     }
 
     @Override
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
 
     	core.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
     }
 
     public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-        modelRenderer.rotateAngleX = x;
-        modelRenderer.rotateAngleY = y;
-        modelRenderer.rotateAngleZ = z;
+        modelRenderer.xRot = x;
+        modelRenderer.yRot = y;
+        modelRenderer.zRot = z;
     }
 
 	@Override
-	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		// Looking rotations
-		this.head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
-    	this.head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F / 3);
-    	this.neck.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F / 3);
-    	this.torso.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F / 3);
+		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+    	this.head.yRot = netHeadYaw * ((float)Math.PI / 180F / 3);
+    	this.neck.yRot = netHeadYaw * ((float)Math.PI / 180F / 3);
+    	this.torso.yRot = netHeadYaw * ((float)Math.PI / 180F / 3);
     	// Always
-        this.torso.rotateAngleX = -MathHelper.cos(ageInTicks * 0.06F) * 0.06F;
-        this.neck.rotateAngleX = MathHelper.cos(ageInTicks * 0.06F) * 0.06F;
+        this.torso.xRot = -MathHelper.cos(ageInTicks * 0.06F) * 0.06F;
+        this.neck.xRot = MathHelper.cos(ageInTicks * 0.06F) * 0.06F;
         // Idle entity
-        this.left_shoulder.rotateAngleX = (-MathHelper.cos(ageInTicks * 0.06F) * 0.03F);	// Arms
-        this.left_shoulder.rotateAngleZ = -0.5235987755982988F + (MathHelper.cos(ageInTicks * 0.06F) * 0.03F);
+        this.left_shoulder.xRot = (-MathHelper.cos(ageInTicks * 0.06F) * 0.03F);	// Arms
+        this.left_shoulder.zRot = -0.5235987755982988F + (MathHelper.cos(ageInTicks * 0.06F) * 0.03F);
 
-        this.right_shoulder.rotateAngleX = (MathHelper.cos(ageInTicks * 0.06F) * 0.03F);
-        this.right_shoulder.rotateAngleZ = 0.7853981633974483F+ (-MathHelper.cos(ageInTicks * 0.06F) * 0.03F);
+        this.right_shoulder.xRot = (MathHelper.cos(ageInTicks * 0.06F) * 0.03F);
+        this.right_shoulder.zRot = 0.7853981633974483F+ (-MathHelper.cos(ageInTicks * 0.06F) * 0.03F);
     	// Moving legs
-    	this.hip_axis.rotateAngleY = (MathHelper.cos(limbSwing * 0.5F) * 1.2F * limbSwingAmount);
-    	this.left_leg_axis.rotateAngleX = 0 + (MathHelper.cos(limbSwing * 0.5F + (float)Math.PI) * 1.2F * limbSwingAmount);
-    	this.left_leg2_axis.rotateAngleX = 0 + (-MathHelper.cos(limbSwing * 1.0F + (float)Math.PI) * 0.6F * limbSwingAmount);
-    	this.right_leg_axis.rotateAngleX = 0 + (MathHelper.cos(limbSwing * 0.5F) * 1.2F * limbSwingAmount);
-    	this.right_leg2_axis.rotateAngleX = 0 + (MathHelper.cos(limbSwing * 1.0F) * 0.6F * limbSwingAmount);
+    	this.hip_axis.yRot = (MathHelper.cos(limbSwing * 0.5F) * 1.2F * limbSwingAmount);
+    	this.left_leg_axis.xRot = 0 + (MathHelper.cos(limbSwing * 0.5F + (float)Math.PI) * 1.2F * limbSwingAmount);
+    	this.left_leg2_axis.xRot = 0 + (-MathHelper.cos(limbSwing * 1.0F + (float)Math.PI) * 0.6F * limbSwingAmount);
+    	this.right_leg_axis.xRot = 0 + (MathHelper.cos(limbSwing * 0.5F) * 1.2F * limbSwingAmount);
+    	this.right_leg2_axis.xRot = 0 + (MathHelper.cos(limbSwing * 1.0F) * 0.6F * limbSwingAmount);
 	}
 
 	@Override
-	public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
+	public void prepareMobModel(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
 		int i = entityIn.getAttackTimer();
 		if (i > 0) {
 			// Clap
-			this.left_shoulder_axis.rotateAngleX	= (-0.75F + 0.75F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.left_shoulder_axis.rotateAngleY	= -(-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10.0F));
-			this.left_shoulder_axis.rotateAngleZ	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10.0F));
-			this.left_arm1_axis.rotateAngleZ		= -(-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.left_forearm_axis.rotateAngleX		= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.left_forearm_axis.rotateAngleZ		= -(-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.left_hand1_axis.rotateAngleZ		= (-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.left_shoulder_axis.xRot	= (-0.75F + 0.75F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.left_shoulder_axis.yRot	= -(-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10.0F));
+			this.left_shoulder_axis.zRot	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10.0F));
+			this.left_arm1_axis.zRot		= -(-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.left_forearm_axis.xRot		= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.left_forearm_axis.zRot		= -(-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.left_hand1_axis.zRot		= (-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
 			// Right arm
-			this.right_shoulder_axis.rotateAngleX	= (-0.75F + 0.75F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.right_shoulder_axis.rotateAngleY	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10-.0F));
-			this.right_shoulder_axis.rotateAngleZ	= -(-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10.0F));
-			this.right_elbow_axis.rotateAngleZ		= (-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.right_forearm_axis.rotateAngleX	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.right_forearm_axis.rotateAngleZ	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
-			this.right_hand1_axis.rotateAngleZ		= -(-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.right_shoulder_axis.xRot	= (-0.75F + 0.75F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.right_shoulder_axis.yRot	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10-.0F));
+			this.right_shoulder_axis.zRot	= -(-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 10.0F));
+			this.right_elbow_axis.zRot		= (-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.right_forearm_axis.xRot	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.right_forearm_axis.zRot	= (-0.25F + 0.25F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.right_hand1_axis.zRot		= -(-0.5F + 0.5F * this.triangleWave((float)i - partialTick, 15.0F));
 			// Torso
-			this.torso_axis.rotateAngleX			= -(-0.10F + 0.10F * this.triangleWave((float)i - partialTick, 15.0F));
+			this.torso_axis.xRot			= -(-0.10F + 0.10F * this.triangleWave((float)i - partialTick, 15.0F));
 		} else {
 			// Moving arms
-			this.left_shoulder_axis.rotateAngleX	= (MathHelper.cos(limbSwing * 0.5F) * 0.8F * limbSwingAmount);
-			this.left_arm1_axis.rotateAngleX		= (MathHelper.cos(limbSwing * 0.5F) * 0.8F * limbSwingAmount);
-			this.left_forearm_axis.rotateAngleX		= (-MathHelper.cos(limbSwing * 0.75F) * 0.8F * limbSwingAmount);
-			this.left_hand1_axis.rotateAngleX		= (-MathHelper.cos(limbSwing * 0.75F) * 0.8F * limbSwingAmount);
+			this.left_shoulder_axis.xRot	= (MathHelper.cos(limbSwing * 0.5F) * 0.8F * limbSwingAmount);
+			this.left_arm1_axis.xRot		= (MathHelper.cos(limbSwing * 0.5F) * 0.8F * limbSwingAmount);
+			this.left_forearm_axis.xRot		= (-MathHelper.cos(limbSwing * 0.75F) * 0.8F * limbSwingAmount);
+			this.left_hand1_axis.xRot		= (-MathHelper.cos(limbSwing * 0.75F) * 0.8F * limbSwingAmount);
 			
-			this.right_shoulder_axis.rotateAngleX	= (MathHelper.cos(limbSwing * 0.5F + (float)Math.PI) * 0.8F * limbSwingAmount);
-			this.right_arm_axis.rotateAngleX		= (MathHelper.cos(limbSwing * 0.5F + (float)Math.PI) * 0.8F * limbSwingAmount);
-			this.right_forearm_axis.rotateAngleX	= (-MathHelper.cos(limbSwing * 0.75F + (float)Math.PI) * 0.8F * limbSwingAmount);
-			this.right_hand1_axis.rotateAngleX		= (-MathHelper.cos(limbSwing * 0.75F + (float)Math.PI) * 0.8F * limbSwingAmount);
+			this.right_shoulder_axis.xRot	= (MathHelper.cos(limbSwing * 0.5F + (float)Math.PI) * 0.8F * limbSwingAmount);
+			this.right_arm_axis.xRot		= (MathHelper.cos(limbSwing * 0.5F + (float)Math.PI) * 0.8F * limbSwingAmount);
+			this.right_forearm_axis.xRot	= (-MathHelper.cos(limbSwing * 0.75F + (float)Math.PI) * 0.8F * limbSwingAmount);
+			this.right_hand1_axis.xRot		= (-MathHelper.cos(limbSwing * 0.75F + (float)Math.PI) * 0.8F * limbSwingAmount);
 			// Readjustments of arms
-			this.left_shoulder_axis.rotateAngleY	= 0;
-			this.left_shoulder_axis.rotateAngleZ	= 0;
-			this.left_arm1_axis.rotateAngleZ		= 0.5235987755982988F;
-			this.left_forearm_axis.rotateAngleZ		= 0.08726646259971647F;
-			this.left_hand1_axis.rotateAngleZ		= 0;
+			this.left_shoulder_axis.yRot	= 0;
+			this.left_shoulder_axis.zRot	= 0;
+			this.left_arm1_axis.zRot		= 0.5235987755982988F;
+			this.left_forearm_axis.zRot		= 0.08726646259971647F;
+			this.left_hand1_axis.zRot		= 0;
 
-			this.right_shoulder_axis.rotateAngleY	= 0;
-			this.right_shoulder_axis.rotateAngleZ	= 0;
-			this.right_elbow_axis.rotateAngleZ		= -0.39269908169872414F;
-			this.right_forearm_axis.rotateAngleZ	= 0;
-			this.right_hand1_axis.rotateAngleZ		= 0;
+			this.right_shoulder_axis.yRot	= 0;
+			this.right_shoulder_axis.zRot	= 0;
+			this.right_elbow_axis.zRot		= -0.39269908169872414F;
+			this.right_forearm_axis.zRot	= 0;
+			this.right_hand1_axis.zRot		= 0;
 		}
 	}
 

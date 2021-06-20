@@ -13,15 +13,13 @@ public class ModSetup {
 	
 	public static final ItemGroup RIKSOFRAIN_GROUP = new ItemGroup("riskofrain_group") {
 		@Override
-		public ItemStack createIcon() {
+		public ItemStack makeIcon() {
 			return new ItemStack(RegistrySetup.COMMON_CHEST.get());
 		}
 	};
 	
 	@SuppressWarnings("deprecation")
 	public static void init(final FMLCommonSetupEvent event) {
-		net.minecraftforge.fml.DeferredWorkQueue.runLater(() -> {
-			SpawnHandler.setSpawnPlacement();
-		});
+		net.minecraftforge.fml.DeferredWorkQueue.runLater(SpawnHandler::setSpawnPlacement);
 	}
 }

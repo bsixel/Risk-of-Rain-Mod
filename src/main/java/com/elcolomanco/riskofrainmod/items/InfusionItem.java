@@ -25,30 +25,30 @@ public class InfusionItem extends Item {
 	
 	public InfusionItem(Properties properties) {
 		super(new Item.Properties()
-				.maxStackSize(64)
-				.group(ModSetup.RIKSOFRAIN_GROUP));
+				.stacksTo(64)
+				.tab(ModSetup.RIKSOFRAIN_GROUP));
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
 		tooltip.add(new TranslationTextComponent("item.riskofrainmod.infusion.tooltip1"));
 		tooltip.add(new TranslationTextComponent("item.riskofrainmod.infusion.tooltip2"));
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-		ItemStack itemStack = playerIn.getHeldItem(handIn);
+	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+		ItemStack itemStack = playerIn.getItemInHand(handIn);
 		double maxHealth = playerIn.getAttribute(Attributes.MAX_HEALTH).getValue();
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			if (maxHealth < RoRconfig.INFUSION_CAP) {
-				playerIn.getAttribute(Attributes.MAX_HEALTH).applyPersistentModifier(new AttributeModifier("healthBoost", 2.0D, Operation.ADDITION));
-				if (!playerIn.abilities.isCreativeMode) {
+				playerIn.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier("healthBoost", 2.0D, Operation.ADDITION));
+				if (!playerIn.abilities.instabuild) {
 					itemStack.shrink(1);
 				}
 			}
 		}
-		worldIn.playSound(playerIn, playerIn.getPosition(), this.getInfusionProcSound(), SoundCategory.NEUTRAL, 0.3F, 1.0F);
-		return ActionResult.resultSuccess(itemStack);
+		worldIn.playSound(playerIn, playerIn.blockPosition(), this.getInfusionProcSound(), SoundCategory.NEUTRAL, 0.3F, 1.0F);
+		return ActionResult.success(itemStack);
 	}
 	
 	protected SoundEvent getInfusionProcSound() {

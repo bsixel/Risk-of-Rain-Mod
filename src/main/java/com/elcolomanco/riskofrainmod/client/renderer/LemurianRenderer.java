@@ -20,7 +20,7 @@ public class LemurianRenderer extends MobRenderer<LemurianEntity, LemurianModel<
 	}
 	
 	@Override
-	public ResourceLocation getEntityTexture(LemurianEntity entity) {
+	public ResourceLocation getTextureLocation(LemurianEntity entity) {
 		if (entity.getVariantType() == LemurianEntity.Type.HOT_BIOMES) {
 			return HOT_BIOMES;
 		} else {

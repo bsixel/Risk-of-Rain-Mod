@@ -18,11 +18,15 @@ public class RoRmod {
 	
 	public static final String MODID = "riskofrainmod";
 	public static final Logger LOGGER = LogManager.getLogger();
-	
+
+	public static float clamp(float val, float min, float max) {
+		return Math.max(min, Math.min(max, val));
+	}
+
 	public RoRmod() {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModSetup::init);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
-		MinecraftForge.EVENT_BUS.addListener(SpawnHandler::addEntitySpawns);
+		MinecraftForge.EVENT_BUS.addListener(SpawnHandler::addFreshEntitySpawns);
 		RegistrySetup.init();
 	}
 }

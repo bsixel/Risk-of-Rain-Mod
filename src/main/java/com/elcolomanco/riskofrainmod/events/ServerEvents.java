@@ -7,7 +7,6 @@ import com.elcolomanco.riskofrainmod.RoRmod;
 import com.elcolomanco.riskofrainmod.entities.GunnerDroneEntity;
 import com.elcolomanco.riskofrainmod.items.CrowbarItem;
 import com.elcolomanco.riskofrainmod.items.LensMakersGlassesItem;
-import com.elcolomanco.riskofrainmod.items.RoseBucklerItem;
 import com.elcolomanco.riskofrainmod.items.TopazBroochItem;
 import com.elcolomanco.riskofrainmod.items.TougherTimesItem;
 import com.elcolomanco.riskofrainmod.setup.RegistrySetup;
@@ -34,22 +33,32 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = RoRmod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerEvents {
-	private static Random rand = new Random();
-	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+
+	private static int getCountInInv(PlayerInventory inv, Item toMatch) {
+		int count = 0;
+		for(int n = 0; n <= 35; ++n) {
+			ItemStack slot = inv.getItem(n);
+			if (slot.getItem().equals(toMatch)) {
+				count += slot.getCount();
+			}
+		}
+		return count;
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onAdvancement(AdvancementEvent event) {
 		if (RoRconfig.SOUNDS) {
 			if (event.getEntityLiving() instanceof PlayerEntity) {
 				PlayerEntity playerIn = (PlayerEntity)event.getEntityLiving();
-				World worldIn = playerIn.getEntityWorld();
-				SoundCategory soundcategory = playerIn instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+				World worldIn = playerIn.level;
+				SoundCategory soundcategory = SoundCategory.PLAYERS;
 				
-				worldIn.playSound((PlayerEntity)null, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), RegistrySetup.ADVANCEMENT_PROC.get(), soundcategory, 0.15F, 1.0F);
+				worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), RegistrySetup.ADVANCEMENT_PROC.get(), soundcategory, 0.15F, 1.0F);
 			}
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onCoinPickUp(EntityItemPickupEvent event) {
 		if (RoRconfig.SOUNDS) {
 			if (event.getEntityLiving() instanceof PlayerEntity) {
@@ -57,48 +66,48 @@ public class ServerEvents {
 				Item item = itemStack.getItem();
 				if (item == Items.GOLD_NUGGET) {
 					PlayerEntity playerIn = (PlayerEntity)event.getEntityLiving();
-					World worldIn = playerIn.getEntityWorld();
-					SoundCategory soundcategory = playerIn instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+					World worldIn = playerIn.level;
+					SoundCategory soundcategory = SoundCategory.PLAYERS;
 					
-					worldIn.playSound((PlayerEntity)null, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), RegistrySetup.COIN_PROC.get(), soundcategory, 0.4F, 1.0F);
+					worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), RegistrySetup.COIN_PROC.get(), soundcategory, 0.4F, 1.0F);
 				}
 			}
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLevelUp(LevelChange event) {
 		if (RoRconfig.SOUNDS) {
 			if (event.getEntityLiving() instanceof PlayerEntity) {
 				PlayerEntity playerIn = (PlayerEntity)event.getEntityLiving();
-				World worldIn = playerIn.getEntityWorld();
-				SoundCategory soundcategory = playerIn instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+				World worldIn = playerIn.level;
+				SoundCategory soundcategory = SoundCategory.PLAYERS;
 				
-				worldIn.playSound((PlayerEntity)null, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), RegistrySetup.LEVEL_UP_PROC.get(), soundcategory, 0.6F, 1.0F);
+				worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), RegistrySetup.LEVEL_UP_PROC.get(), soundcategory, 0.6F, 1.0F);
 			}
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onPlayerDeath(LivingDeathEvent event) {
 		if (RoRconfig.SOUNDS) {
 			if (event.getEntityLiving() instanceof PlayerEntity) {
 				PlayerEntity playerIn = (PlayerEntity)event.getEntityLiving();
-				World worldIn = playerIn.getEntityWorld();
-				SoundCategory soundcategory = playerIn instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+				World worldIn = playerIn.level;
+				SoundCategory soundcategory = SoundCategory.PLAYERS;
 				
-				worldIn.playSound((PlayerEntity)null, playerIn.getPosX(), playerIn.getPosY(), playerIn.getPosZ(), RegistrySetup.PLAYER_DEATH_PROC.get(), soundcategory, 1.0F, 1.0F);
+				worldIn.playSound(null, playerIn.getX(), playerIn.getY(), playerIn.getZ(), RegistrySetup.PLAYER_DEATH_PROC.get(), soundcategory, 1.0F, 1.0F);
 			}
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
-	public static void inmuneDrones(LivingAttackEvent event) {
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public static void immuneDrones(LivingAttackEvent event) {
 		if (event.getEntityLiving() instanceof GunnerDroneEntity) {
-			if (event.getSource().getTrueSource() instanceof LivingEntity) {
+			if (event.getSource().getEntity() instanceof LivingEntity) {
 				boolean tamed = false;
 				GunnerDroneEntity drone = (GunnerDroneEntity)event.getEntityLiving();
-				if (drone.isTamed()) {
+				if (drone.isTame()) {
 					tamed = true;
 				}
 				if (tamed) {
@@ -111,24 +120,24 @@ public class ServerEvents {
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void crowbarEffect(LivingDamageEvent event) {
-		if (event.getSource().getTrueSource() instanceof PlayerEntity) {
-			boolean found = false;
-			PlayerEntity killer = (PlayerEntity)event.getSource().getTrueSource();
+		if (event.getSource().getEntity() instanceof PlayerEntity) {
+			PlayerEntity killer = (PlayerEntity)event.getSource().getEntity();
 			PlayerInventory inv = killer.inventory;
-			
+
+			int crowbarCount = 0;
 			for(int n = 0; n <= 35; ++n) {
-				if (inv.getStackInSlot(n).getItem().equals(RegistrySetup.CROWBAR.get())) {
-					found = true;
-					break;
+				ItemStack slot = inv.getItem(n);
+				if (slot.getItem().equals(RegistrySetup.CROWBAR.get())) {
+					crowbarCount += slot.getCount();
 				}
 			}
-			if (!found) {
+			if (crowbarCount <= 0) {
 				return;
 			}
 			boolean proc = false;
-			LivingEntity entity = (LivingEntity)event.getEntityLiving();
+			LivingEntity entity = event.getEntityLiving();
 			float currentHp = entity.getHealth();
 			float maxHp = entity.getMaxHealth();
 			if (currentHp >= (maxHp * 0.9)) {
@@ -138,40 +147,35 @@ public class ServerEvents {
 				return;
 			}
 			float damage = event.getAmount();
-			double multiplier = CrowbarItem.getDamageMultiplier();
+
+			double multiplier = CrowbarItem.getDamageMultiplier(crowbarCount);
 			float crowbarDamage = (float)(damage * multiplier);
-			World worldIn = killer.getEntityWorld();
-			SoundCategory soundcategory = killer instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+			World worldIn = killer.level;
+			SoundCategory soundcategory = SoundCategory.PLAYERS;
 			
 			event.setAmount(crowbarDamage);
-			worldIn.playSound((PlayerEntity)null, killer.getPosX(), killer.getPosY(), killer.getPosZ(), RegistrySetup.CROWBAR_PROC.get(), soundcategory, 0.4F, rand.nextFloat() * 0.1F + 0.9F);
+			worldIn.playSound(null, killer.getX(), killer.getY(), killer.getZ(), RegistrySetup.CROWBAR_PROC.get(), soundcategory, 0.4F, killer.getRandom().nextFloat() * 0.1F + 0.9F);
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void lensMakersGlassesEffect(LivingDamageEvent event) {
 		
-		if (event.getSource().getTrueSource() instanceof PlayerEntity) {
-			boolean found = false;
-			PlayerEntity killer = (PlayerEntity)event.getSource().getTrueSource();
+		if (event.getSource().getEntity() instanceof PlayerEntity) {
+			PlayerEntity killer = (PlayerEntity)event.getSource().getEntity();
 			PlayerInventory inv = killer.inventory;
-			
-			for(int n = 0; n <= 35; ++n) {
-				if (inv.getStackInSlot(n).getItem().equals(RegistrySetup.LENS_MARKS_GLASSES.get())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
+
+			int count = getCountInInv(inv, RegistrySetup.LENS_MAKERS_GLASSES.get());
+			if (count == 0) {
 				return;
 			}
 			boolean isCrit = false;
-			double chance = LensMakersGlassesItem.getChance();
+			double chance = LensMakersGlassesItem.getChance(count);
 			float damage = event.getAmount();
 			float crit = damage * 2;
 			int random = LensMakersGlassesItem.getRandomCrit();
-			World worldIn = killer.getEntityWorld();
-			SoundCategory soundcategory = killer instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+			World worldIn = killer.level;
+			SoundCategory soundcategory = SoundCategory.PLAYERS;
 			
 			if (random <= chance) {
 				isCrit = true;
@@ -180,81 +184,60 @@ public class ServerEvents {
 				return;
 			}
 			event.setAmount(crit);
-			worldIn.playSound((PlayerEntity)null, killer.getPosX(), killer.getPosY(), killer.getPosZ(), RegistrySetup.LENS_CRIT_PROC.get(), soundcategory, 0.4F, rand.nextFloat() * 0.1F + 0.9F);
+			worldIn.playSound(null, killer.getX(), killer.getY(), killer.getZ(), RegistrySetup.LENS_CRIT_PROC.get(), soundcategory, 0.4F, killer.getRandom().nextFloat() * 0.1F + 0.9F);
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void roseBucklerEffect(LivingDamageEvent event) {
 		
 		if (event.getEntityLiving() instanceof PlayerEntity) {
-			boolean found = false;
 			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
 			PlayerInventory inv = player.inventory;
-			
-			for(int n = 0; n <= 35; ++n) {
-				if (inv.getStackInSlot(n).getItem().equals(RegistrySetup.ROSE_BUCKLER.get())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
+
+			int count = getCountInInv(inv, RegistrySetup.ROSE_BUCKLER.get());
+			if (count == 0) {
 				return;
 			}
-			int ammount = RoseBucklerItem.getAmmount();
-			World worldIn = player.getEntityWorld();
-			SoundCategory soundcategory = player instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
-			if (player.isSprinting() && ammount >= 4) {
-				worldIn.playSound((PlayerEntity)null, player.getPosX(), player.getPosY(), player.getPosZ(), RegistrySetup.ROSE_BUCKLER_PROC.get(), soundcategory, 0.4F, 1.0F);
+			World worldIn = player.level;
+			SoundCategory soundcategory = SoundCategory.PLAYERS;
+			if (player.isSprinting()) {
+				worldIn.playSound(null, player.getX(), player.getY(), player.getZ(), RegistrySetup.ROSE_BUCKLER_PROC.get(), soundcategory, 0.4F, 1.0F);
 			}
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void topazBroochEffect(LivingDeathEvent event) {
 		
-		if (event.getSource().getTrueSource() instanceof PlayerEntity) {
-			boolean found = false;
-			PlayerEntity killer = (PlayerEntity)event.getSource().getTrueSource();
+		if (event.getSource().getEntity() instanceof PlayerEntity) {
+			PlayerEntity killer = (PlayerEntity)event.getSource().getEntity();
 			PlayerInventory inv = killer.inventory;
-			
-			for(int n = 0; n <= 35; ++n) {
-				if (inv.getStackInSlot(n).getItem().equals(RegistrySetup.TOPAZ_BROOCH.get())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
+
+			int count = getCountInInv(inv, RegistrySetup.TOPAZ_BROOCH.get());
+			if (count == 0) {
 				return;
 			}
-			(killer).addPotionEffect(new EffectInstance(Effects.ABSORPTION, 160, TopazBroochItem.getAmplifier(), true, false));
+			(killer).addEffect(new EffectInstance(Effects.ABSORPTION, 160, TopazBroochItem.getAmplifier(count), true, false));
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void tougherTimesEffect(LivingDamageEvent event) {
 		
 		if (event.getEntityLiving() instanceof PlayerEntity) {
-			boolean found = false;
 			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
 			PlayerInventory inv = player.inventory;
-			
-			for(int n = 0; n <= 35; ++n) {
-				if (inv.getStackInSlot(n).getItem().equals(RegistrySetup.TOUGHER_TIMES.get())) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
+
+			int count = getCountInInv(inv, RegistrySetup.TOUGHER_TIMES.get());
+			if (count == 0) {
 				return;
 			}
 			boolean isBlocking = false;
-			double chance = TougherTimesItem.getChance();
-			float damage = event.getAmount();
-			float blocked = damage - damage;
+			double chance = TougherTimesItem.getChance(count);
 			int random = TougherTimesItem.getRandomBlockChance();
-			World worldIn = player.getEntityWorld();
-			SoundCategory soundcategory = player instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.NEUTRAL;
+			World worldIn = player.level;
+			SoundCategory soundcategory = SoundCategory.PLAYERS;
 			
 			if (random <= chance) {
 				isBlocking = true;
@@ -262,8 +245,9 @@ public class ServerEvents {
 			if (!isBlocking) {
 				return;
 			}
-			event.setAmount(blocked);
-			worldIn.playSound((PlayerEntity)null, player.getPosX(), player.getPosY(), player.getPosZ(), RegistrySetup.TOUGHER_TIMES_PROC.get(), soundcategory, 0.4F, 1.0F);
+			event.setAmount(0);
+			event.setCanceled(true); // To stop procs, too
+			worldIn.playSound(null, player.getX(), player.getY(), player.getZ(), RegistrySetup.TOUGHER_TIMES_PROC.get(), soundcategory, 0.4F, 1.0F);
 		}
 	}
 }

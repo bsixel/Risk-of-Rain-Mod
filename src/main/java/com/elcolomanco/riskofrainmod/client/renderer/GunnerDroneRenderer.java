@@ -19,7 +19,7 @@ public class GunnerDroneRenderer extends MobRenderer<GunnerDroneEntity, GunnerDr
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(GunnerDroneEntity entity) {
+	public ResourceLocation getTextureLocation(GunnerDroneEntity entity) {
 		return TEXTURE;
 	}
 }
